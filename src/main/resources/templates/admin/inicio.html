@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Administración')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!-- La misma plantilla se completa con los datos que proporciona HomeController. -->
+  <div class="admin-layout">
+   <div th:replace="~{fragments/layout :: menu}">
+   </div>
+   <main class="admin-content" id="contenido">
+    <div class="page-heading">
+     <div>
+      <p class="eyebrow">
+       Panel administrativo
+      </p>
+      <h1>
+       Hola, Sofía.
+      </h1>
+      <p class="muted">
+       Así está la tienda después de confirmar los pedidos del día.
+      </p>
+     </div>
+     <a class="btn" th:href="@{/admin/donaciones#formulario}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="M12 4v16M4 12h16">
+       </path>
+      </svg>
+      Registrar donación
+     </a>
+    </div>
+    <section aria-label="Resumen de piezas" class="metric-grid">
+     <article class="metric">
+      <span class="small">
+       Pendientes de revisión
+      </span>
+      <strong>
+       1
+      </strong>
+      <span class="small">
+       Sin publicar
+      </span>
+     </article>
+     <article class="metric">
+      <span class="small">
+       Disponibles
+      </span>
+      <strong>
+       2
+      </strong>
+      <span class="small">
+       Verificadas y publicadas
+      </span>
+     </article>
+     <article class="metric">
+      <span class="small">
+       Apartadas
+      </span>
+      <strong>
+       2
+      </strong>
+      <span class="small">
+       En pedidos pendientes
+      </span>
+     </article>
+     <article class="metric">
+      <span class="small">
+       Vendidas
+      </span>
+      <strong>
+       2
+      </strong>
+      <span class="small">
+       Pago confirmado
+      </span>
+     </article>
+    </section>
+    <div class="grid-3">
+     <a class="link-card" th:href="@{/admin/autenticidad}">
+      <h3>
+       1 pieza por revisar
+      </h3>
+      <p>
+       Revisa su autenticidad antes de publicarla.
+      </p>
+     </a>
+     <a class="link-card" th:href="@{/admin/pedidos}">
+      <h3>
+       Pedidos y envíos
+      </h3>
+      <p>
+       Registra pagos y prepara los despachos.
+      </p>
+     </a>
+     <a class="link-card" th:href="@{/admin/inventario}">
+      <h3>
+       Movimientos físicos
+      </h3>
+      <p>
+       Recepción y salida de cada pieza.
+      </p>
+     </a>
+    </div>
+    <section class="section-space">
+     <div aria-label="Pedidos recientes" class="table-wrap" role="region" tabindex="0">
+      <table>
+       <caption>
+        Pedidos recientes
+       </caption>
+       <thead>
+        <tr>
+         <th scope="col">
+          Pedido
+         </th>
+         <th scope="col">
+          Cliente
+         </th>
+         <th scope="col">
+          Pieza
+         </th>
+         <th scope="col">
+          Total
+         </th>
+         <th scope="col">
+          Estado
+         </th>
+         <th scope="col">
+          Acción
+         </th>
+        </tr>
+       </thead>
+       <tbody>
+        <tr>
+         <td>
+          <strong>
+           #ORD-8492
+          </strong>
+          <br/>
+          <small>
+           24 oct 2024
+          </small>
+         </td>
+         <td>
+          Juan Pérez
+         </td>
+         <td>
+          Playera Tour The Eras
+         </td>
+         <td>
+          $28.00 USD
+         </td>
+         <td>
+          <span class="pill pending">
+           Pendiente
+          </span>
+         </td>
+         <td>
+          <a class="table-link" th:href="@{/admin/pedido(id='8492')}">
+           Ver detalle
+          </a>
+         </td>
+        </tr>
+        <tr>
+         <td>
+          <strong>
+           #ORD-8410
+          </strong>
+          <br/>
+          <small>
+           18 oct 2024
+          </small>
+         </td>
+         <td>
+          Juan Pérez
+         </td>
+         <td>
+          Sudadera Brat
+         </td>
+         <td>
+          $48.00 USD
+         </td>
+         <td>
+          <span class="pill sent">
+           Enviado
+          </span>
+         </td>
+         <td>
+          <a class="table-link" th:href="@{/admin/pedido(id='8410')}">
+           Ver detalle
+          </a>
+         </td>
+        </tr>
+        <tr>
+         <td>
+          <strong>
+           #ORD-8201
+          </strong>
+          <br/>
+          <small>
+           10 oct 2024
+          </small>
+         </td>
+         <td>
+          Juan Pérez
+         </td>
+         <td>
+          Póster First Impressions
+         </td>
+         <td>
+          $18.00 USD
+         </td>
+         <td>
+          <span class="pill delivered">
+           Entregado
+          </span>
+         </td>
+         <td>
+          <a class="table-link" th:href="@{/admin/pedido(id='8201')}">
+           Ver detalle
+          </a>
+         </td>
+        </tr>
+        <tr>
+         <td>
+          <strong>
+           #ORD-8115
+          </strong>
+          <br/>
+          <small>
+           8 oct 2024
+          </small>
+         </td>
+         <td>
+          Juan Pérez
+         </td>
+         <td>
+          Cárdigan bordado
+         </td>
+         <td>
+          $42.00 USD
+         </td>
+         <td>
+          <span class="pill cancelled">
+           Cancelado
+          </span>
+         </td>
+         <td>
+          <a class="table-link" th:href="@{/admin/pedido(id='8115')}">
+           Ver detalle
+          </a>
+         </td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+    </section>
+   </main>
+  </div>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

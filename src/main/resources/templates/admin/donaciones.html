@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Donaciones')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!-- La misma plantilla se completa con los datos que proporciona HomeController. -->
+  <div class="admin-layout">
+   <div th:replace="~{fragments/layout :: menu}">
+   </div>
+   <main class="admin-content" id="contenido">
+    <div class="page-heading">
+     <div>
+      <p class="eyebrow">
+       Studio 21
+      </p>
+      <h1>
+       Donaciones y donantes
+      </h1>
+      <p class="muted">
+       El origen de cada pieza que recibe Studio 21.
+      </p>
+     </div>
+     <a class="btn" th:href="@{/admin/donaciones#formulario}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="M12 4v16M4 12h16">
+       </path>
+      </svg>
+      Registrar donación
+     </a>
+    </div>
+    <div class="notice">
+     <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10">
+      </circle>
+      <path d="M12 11v6M12 7v1">
+      </path>
+     </svg>
+     <p>
+      Los donantes no necesitan cuenta de usuario. Las piezas se reciben sin pago al donante.
+     </p>
+    </div>
+    <section class="section-space">
+     <div aria-label="Donaciones recibidas" class="table-wrap" role="region" tabindex="0">
+      <table>
+       <caption>
+        Donaciones recibidas
+       </caption>
+       <thead>
+        <tr>
+         <th scope="col">
+          Folio
+         </th>
+         <th scope="col">
+          Donante
+         </th>
+         <th scope="col">
+          Recepción
+         </th>
+         <th scope="col">
+          Piezas
+         </th>
+         <th scope="col">
+          Responsable
+         </th>
+         <th scope="col">
+          Acción
+         </th>
+        </tr>
+       </thead>
+       <tbody>
+        <tr>
+         <td>
+          DON-104
+         </td>
+         <td>
+          Mariana López
+         </td>
+         <td>
+          18 oct 2024
+         </td>
+         <td>
+          2
+         </td>
+         <td>
+          Carlos Mendoza
+         </td>
+         <td>
+          <a class="table-link" th:href="@{/admin/donaciones#detalle(detalle='true')}">
+           Ver DON-104
+          </a>
+         </td>
+        </tr>
+        <tr>
+         <td>
+          DON-105
+         </td>
+         <td>
+          Valeria Montesino
+         </td>
+         <td>
+          19 oct 2024
+         </td>
+         <td>
+          2
+         </td>
+         <td>
+          Sofía Rivas
+         </td>
+         <td>
+          <span class="muted">
+           Registrada
+          </span>
+         </td>
+        </tr>
+        <tr>
+         <td>
+          DON-106
+         </td>
+         <td>
+          Carlos Osorio
+         </td>
+         <td>
+          20 oct 2024
+         </td>
+         <td>
+          1
+         </td>
+         <td>
+          Sofía Rivas
+         </td>
+         <td>
+          <span class="muted">
+           Registrada
+          </span>
+         </td>
+        </tr>
+        <tr>
+         <td>
+          DON-103
+         </td>
+         <td>
+          Andrea Beltrán
+         </td>
+         <td>
+          8 oct 2024
+         </td>
+         <td>
+          1
+         </td>
+         <td>
+          Carlos Mendoza
+         </td>
+         <td>
+          <span class="muted">
+           Registrada
+          </span>
+         </td>
+        </tr>
+        <tr>
+         <td>
+          DON-107
+         </td>
+         <td>
+          Andrea Beltrán
+         </td>
+         <td>
+          24 oct 2024
+         </td>
+         <td>
+          1
+         </td>
+         <td>
+          Sofía Rivas
+         </td>
+         <td>
+          <span class="muted">
+           Registrada
+          </span>
+         </td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+    </section>
+    <details class="details-box section-space" id="formulario">
+     <summary>
+      Registrar donación
+     </summary>
+     <div class="page-heading">
+      <div>
+       <p class="eyebrow">
+        Studio 21
+       </p>
+       <h2>
+        Registrar donación
+       </h2>
+       <p class="muted">
+        Selecciona al donante o captura sus datos y registra las piezas recibidas.
+       </p>
+      </div>
+     </div>
+     <!-- Maquetado: este formulario valida con HTML y muestra la siguiente vista.
+     Los campos no envían datos ni se guardan en este avance. -->
+     <form method="get" th:action="@{/admin/donaciones}">
+      <section class="panel">
+       <fieldset>
+        <legend>
+         1. Donante
+        </legend>
+        <details class="details-box">
+         <summary>
+          Seleccionar un donante existente
+         </summary>
+         <div class="field">
+          <label for="donante-existente">
+           Donante registrado
+          </label>
+          <select id="donante-existente">
+           <option>
+            Seleccionar
+           </option>
+           <option>
+            Mariana López
+           </option>
+           <option>
+            Valeria Montesino
+           </option>
+           <option>
+            Carlos Osorio
+           </option>
+           <option>
+            Andrea Beltrán
+           </option>
+          </select>
+         </div>
+        </details>
+        <p class="small muted section-space">
+         Si es una persona nueva, registra sus datos.
+        </p>
+        <div class="form-grid">
+         <div class="field">
+          <label for="donante-nombre">
+           Nombre
+          </label>
+          <input id="donante-nombre" type="text"/>
+         </div>
+         <div class="field">
+          <label for="donante-tel">
+           Teléfono
+          </label>
+          <input id="donante-tel" type="tel"/>
+         </div>
+         <div class="field full">
+          <label for="donante-email">
+           Correo opcional
+          </label>
+          <input id="donante-email" type="email"/>
+         </div>
+        </div>
+       </fieldset>
+       <fieldset>
+        <legend>
+         2. Recepción
+        </legend>
+        <div class="form-grid">
+         <div class="field">
+          <label for="fecha">
+           Fecha de recepción *
+          </label>
+          <input id="fecha" required="" type="date" value="2024-10-24"/>
+         </div>
+         <div class="field">
+          <label for="receptor">
+           Administrador receptor *
+          </label>
+          <input id="receptor" required="" type="text" value="Sofía Rivas"/>
+         </div>
+         <div class="field full">
+          <label for="observaciones">
+           Observaciones de entrega
+          </label>
+          <textarea id="observaciones" rows="3"></textarea>
+         </div>
+        </div>
+       </fieldset>
+       <fieldset>
+        <legend>
+         3. Piezas recibidas
+        </legend>
+        <div class="form-grid">
+         <div class="field">
+          <label for="pieza1">
+           Nombre de la primera pieza *
+          </label>
+          <input id="pieza1" required="" type="text"/>
+         </div>
+         <div class="field">
+          <label for="cat1">
+           Categoría
+          </label>
+          <select id="cat1">
+           <option>
+            Playeras
+           </option>
+           <option>
+            Sudaderas
+           </option>
+           <option>
+            Vinilos
+           </option>
+           <option>
+            Accesorios
+           </option>
+          </select>
+         </div>
+         <div class="field full">
+          <label for="estado1">
+           Condición observada
+          </label>
+          <textarea id="estado1" rows="3"></textarea>
+         </div>
+        </div>
+        <details class="details-box section-space">
+         <summary>
+          Agregar una segunda pieza
+         </summary>
+         <div class="form-grid">
+          <div class="field">
+           <label for="pieza2">
+            Nombre de la segunda pieza
+           </label>
+           <input id="pieza2" type="text"/>
+          </div>
+          <div class="field">
+           <label for="cat2">
+            Categoría de la segunda pieza
+           </label>
+           <select id="cat2">
+            <option>
+             Playeras
+            </option>
+            <option>
+             Sudaderas
+            </option>
+            <option>
+             Vinilos
+            </option>
+            <option>
+             Accesorios
+            </option>
+           </select>
+          </div>
+         </div>
+        </details>
+       </fieldset>
+       <div class="form-actions">
+        <button class="btn" type="submit">
+         Registrar donación
+         <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+          <path d="M4 12h16m-6-6 6 6-6 6">
+          </path>
+         </svg>
+        </button>
+        <a class="btn btn-outline" th:href="@{/admin/donaciones}">
+         Cancelar
+        </a>
+       </div>
+      </section>
+     </form>
+    </details>
+    <section class="section-space" id="detalle" th:if="${detalle}">
+     <div class="page-heading">
+      <div>
+       <p class="eyebrow">
+        Studio 21
+       </p>
+       <h2>
+        Donación #DON-104
+       </h2>
+       <p class="muted">
+        Recibida el 18 de octubre de 2024.
+       </p>
+      </div>
+      <a class="btn btn-outline" th:href="@{/admin/donaciones}">
+       Volver al listado
+      </a>
+     </div>
+     <div class="grid-2">
+      <section class="panel">
+       <h2>
+        Donante
+       </h2>
+       <p>
+        <strong>
+         Mariana López
+        </strong>
+        <br/>
+        +52 55 4192 8810
+        <br/>
+        mariana.lopez@ejemplo.com
+       </p>
+       <p class="small muted">
+        No requiere cuenta de cliente.
+       </p>
+      </section>
+      <section class="panel">
+       <h2>
+        Recepción
+       </h2>
+       <p>
+        <strong>
+         Carlos Mendoza
+        </strong>
+        <br/>
+        18 oct 2024, 10:15
+       </p>
+       <p>
+        Dos prendas entregadas en mano. Donación voluntaria sin compensación económica.
+       </p>
+      </section>
+     </div>
+     <section class="panel section-space">
+      <h2>
+       Piezas recibidas
+      </h2>
+      <div class="cart-item">
+       <img alt="Playera Tour The Eras" height="95" th:src="@{/img/playera-eras.jpg}" width="90"/>
+       <div>
+        <h3>
+         Playera Tour The Eras
+        </h3>
+        <p class="muted">
+         Taylor Swift · M
+        </p>
+        <p>
+         Usada con detalles · Cantidad: 1
+        </p>
+        <span class="pill reserved">
+         Apartada
+        </span>
+       </div>
+       <div class="item-price">
+        $28.00
+        <small>
+         USD
+        </small>
+       </div>
+      </div>
+      <hr/>
+      <div class="cart-item">
+       <img alt="Sudadera Brat" height="95" th:src="@{/img/sudadera-brat.jpg}" width="90"/>
+       <div>
+        <h3>
+         Sudadera Brat
+        </h3>
+        <p class="muted">
+         Charli XCX · L
+        </p>
+        <p>
+         Como nueva · Cantidad: 1
+        </p>
+        <span class="pill sold">
+         Vendida
+        </span>
+       </div>
+       <div class="item-price">
+        $48.00
+        <small>
+         USD
+        </small>
+       </div>
+      </div>
+     </section>
+    </section>
+   </main>
+  </div>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

@@ -1,67 +1,101 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('Studio 21 · Detalle de prenda')}"></head>
-<link rel="stylesheet" th:href="@{/statics/css/styles.css}">
-    <meta charset="UTF-8">
-    <title>producto</title>
-</head>
-<body>
-
-    <main class="wrap detalle">
-        <div>
-            <div class="ficha">
-                <div class="galeria">
-                    <div class="miniaturas">
-                        <img th:replace="~{fragments/tarjetas :: miniatura('thumb1')}">
-                        <img th:replace="~{fragments/tarjetas :: miniatura('thumb2')}">
-                        <img th:replace="~{fragments/tarjetas :: miniatura('thumb3')}">
-                        <img th:replace="~{fragments/tarjetas :: miniatura('thumb4')}">
-                        <img th:replace="~{fragments/tarjetas :: miniatura('thumb5')}">
-                    </div>
-                    <div class="principal"><div class="tag"><span class="pill">100% solidario</span><span class="pill ver">✓ Verificado</span></div>
-                        <button class="fav" onclick="alternarFavorito(this)" aria-label="Favorito">♡</button>
-                        <img id="imgPrincipal" th:src="@{/img/chaqueta.jpg}" alt="Prenda"></div>
-                </div>
-            </div>
-            <div class="bloque" style="margin-top:16px"><h1>Camiseta Vintage de Gira The Strokes 2001 – Donada por Coleccionista / Fan</h1>
-                <p style="margin-top:10px"><span class="pill">★ 5.0 (Prenda revisada por el equipo)</span> <span class="pill" style="background:#f6d5ea;color:var(--pl)">Precio comunitario solidario</span></p></div>
-            <div class="bloque causa" style="margin-top:16px"><small>CAUSAS &amp; COMUNIDAD MUSICAL</small>
-                <h3>El 100% de esta compra ($35 USD) se destina a talleres de música comunitaria</h3>
-                <p class="nota">Tu compra financia clases de guitarra, batería y sonido para jóvenes en talleres barriales.</p>
-                <small>META FONDO TALLERES BARRIALES · $3,420 / $5,000 USD (68.4%)</small><div class="progreso"><i></i></div></div>
-            <div class="ficha" style="margin-top:16px"><h3>Ficha técnica &amp; estado de la prenda</h3>
-                <div class="specs"><div>ARTÍCULO <b>Camiseta Oficial de Gira The Strokes</b></div><div>TALLA <b>Talla M Unisex (Pecho 50cm, Largo 68cm)</b></div></div>
-                <h3>Historia y procedencia</h3>
-                <p>Comprada en el legendario concierto de <a href="#">The Strokes en el London Astoria el 22 de octubre de 2001</a>. Esta camiseta formó parte de la primera tirada de merchandising promocional del álbum debut <i>Is This It</i>.</p>
-                <h3>Preguntas sobre esta prenda</h3>
-                <div class="preg"><input placeholder="Escribe tu consulta sobre medidas exactas, lavado o envío solidario…"><button class="btn">Preguntar</button></div>
-                <div class="qa"><b>PREGUNTA:</b> ¿Las medidas corresponden a una talla M regular actual?<br>↳ <b>Respuesta de la tienda comunitaria:</b> Sí, mide 50 cm de axila a axila y 68 cm de largo.</div>
-                <div class="qa"><b>PREGUNTA:</b> ¿Se puede pagar con tarjeta o transferencia directa?<br>↳ <b>Respuesta de la tienda comunitaria:</b> Sí, aceptamos tarjeta y transferencias.</div>
-            </div>
-        </div>
-        <aside>
-            <div class="compra">
-                <b style="text-align:right">Stock: 1 unidad única</b>
-                <div><span class="antes">$75 USD</span> <span class="pill">53% off – precio donación solidaria</span></div>
-                <div class="precio" style="font-size:40px;color:var(--pl)">$35 <small>USD</small></div>
-                <ul><li><b>Envío seguro disponible</b>Empaque ecológico con despacho a todo el país.</li>
-                    <li><b>Devolución sin costo durante 30 días</b>Si la talla no te queda bien, devuélvela.</li>
-                    <li><b>100% Compra con sentido</b>Tu dinero se transfiere íntegro a los talleres de música.</li></ul>
-                <button class="btn full">Comprar ahora</button><button class="btn alt">🛒 Agregar al carrito</button>
-            </div>
-            <div class="bloque" style="margin-top:12px"><small>GARANTÍA DE DONACIÓN TRANSPARENTE</small><p>Recibes comprobante fiscal del aporte a la fundación beneficiaria.</p></div>
-        </aside>
-    </main>
-
-    <section class="tambien" data-fila><div class="wrap">
-        <div class="cab"><h2>Quienes vieron esta prenda también compraron</h2><div class="flechas"><button>‹</button> <button>›</button></div></div>
-        <div class="fila">
-            <article th:replace="~{fragments/tarjetas :: relacionado('rel1')}"></article>
-            <article th:replace="~{fragments/tarjetas :: relacionado('rel2')}"></article>
-            <article th:replace="~{fragments/tarjetas :: relacionado('rel3')}"></article>
-            <article th:replace="~{fragments/tarjetas :: relacionado('rel4')}"></article>
-            <article th:replace="~{fragments/tarjetas :: relacionado('rel5')}"></article>
-        </div>
-    </div></section>
-</body>
+ <head th:replace="~{fragments/layout :: head('Producto')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!-- La misma plantilla se completa con los datos que proporciona HomeController. -->
+  <main class="container" id="contenido">
+   <div class="page-heading">
+    <div>
+     <p class="eyebrow">
+      Studio 21
+     </p>
+     <h1>
+      Detalle de la pieza
+     </h1>
+     <p class="muted">
+      Una unidad física, una nueva historia.
+     </p>
+    </div>
+   </div>
+   <div class="product-detail">
+    <div>
+     <img class="detail-photo" th:alt="${producto.name}" th:src="@{/img/{archivo}(archivo=${producto.img})}"/>
+     <p class="small muted">
+      Se entrega la pieza fotografiada.
+     </p>
+    </div>
+    <section class="detail-info">
+     <p class="eyebrow" th:text="${producto.artist}">
+     </p>
+     <h2 th:text="${producto.name}">
+     </h2>
+     <p class="price">
+      <strong th:text="${producto.priceText}">
+      </strong>
+      USD
+     </p>
+     <p class="small muted">
+      Precio original:
+      <span th:text="${producto.originalText}">
+      </span>
+      USD
+     </p>
+     <p th:text="${producto.desc}">
+     </p>
+     <div class="actions"><span class="pill verified">Autenticidad verificada</span><span class="pill" th:classappend="${producto.kind}" th:text="${producto.status}">Disponible</span></div>
+     <dl class="specs section-space">
+      <div>
+       <dt>
+        Artista
+       </dt>
+       <dd th:text="${producto.artist}">
+       </dd>
+      </div>
+      <div>
+       <dt>
+        Categoría
+       </dt>
+       <dd th:text="${producto.cat}">
+       </dd>
+      </div>
+      <div>
+       <dt>
+        Talla
+       </dt>
+       <dd th:text="${producto.size}">
+       </dd>
+      </div>
+      <div>
+       <dt>
+        Condición
+       </dt>
+       <dd th:text="${producto.condition}">
+       </dd>
+      </div>
+     </dl>
+     <h3>
+      Condición y detalles
+     </h3>
+     <p th:text="${producto.wear}">
+     </p>
+     <a class="btn btn-block" th:href="@{/carrito(id=${producto.slug})}" th:if="${producto.status == 'Disponible'}">
+      Agregar al carrito
+     </a>
+     <button class="btn btn-block" disabled="" th:text="${producto.status}" th:unless="${producto.status == 'Disponible'}">
+     </button>
+     <p class="small muted section-space">
+      Agregar al carrito no reserva. Se aparta al confirmar el pedido.
+     </p>
+    </section>
+   </div>
+  </main>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
 </html>

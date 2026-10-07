@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Mis direcciones')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!-- La misma plantilla se completa con los datos que proporciona HomeController. -->
+  <main class="container" id="contenido">
+   <div class="page-heading">
+    <div>
+     <p class="eyebrow">
+      Studio 21
+     </p>
+     <h1>
+      Mis direcciones
+     </h1>
+     <p class="muted">
+      Elige dónde recibir tus próximas piezas.
+     </p>
+    </div>
+    <a class="btn" th:href="@{/direcciones#formulario}">
+     <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+      <path d="M12 4v16M4 12h16">
+      </path>
+     </svg>
+     Nueva dirección
+    </a>
+   </div>
+   <nav aria-label="Mi cuenta" class="tabs">
+    <a th:href="@{/cuenta}">
+     Mis datos
+    </a>
+    <a aria-current="page" th:href="@{/direcciones}">
+     Direcciones
+    </a>
+    <a th:href="@{/pedidos}">
+     Mis pedidos
+    </a>
+   </nav>
+   <div class="notice">
+    <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+     <circle cx="12" cy="12" r="10">
+     </circle>
+     <path d="M12 11v6M12 7v1">
+     </path>
+    </svg>
+    <p>
+     Los pedidos conservan la dirección que elegiste al comprar. Editar una dirección guardada no modifica pedidos anteriores.
+    </p>
+   </div>
+   <div class="grid-2 section-space">
+    <article class="panel">
+     <h2>
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z">
+       </path>
+       <circle cx="12" cy="10" r="3">
+       </circle>
+      </svg>
+      Casa
+     </h2>
+     <p>
+      <strong>
+       Juan Pérez
+      </strong>
+      <br/>
+      Av. Insurgentes Sur 1450, Int. 4B
+      <br/>
+      Actipan, Ciudad de México
+      <br/>
+      CP 03230
+      <br/>
+      +52 55 1234 5678
+     </p>
+     <a class="btn btn-outline" th:href="@{/direcciones#formulario}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="m16 3 5 5L8 21H3v-5L16 3Zm-2 2 5 5">
+       </path>
+      </svg>
+      Editar dirección
+     </a>
+    </article>
+    <article class="panel">
+     <h2>
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z">
+       </path>
+       <circle cx="12" cy="10" r="3">
+       </circle>
+      </svg>
+      Trabajo
+     </h2>
+     <p>
+      <strong>
+       Juan Pérez
+      </strong>
+      <br/>
+      Colima 220, Depto. 12
+      <br/>
+      Roma Norte, Ciudad de México
+      <br/>
+      CP 06700
+      <br/>
+      +52 55 1234 5678
+     </p>
+     <a class="btn btn-outline" th:href="@{/direcciones#formulario}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="m16 3 5 5L8 21H3v-5L16 3Zm-2 2 5 5">
+       </path>
+      </svg>
+      Editar dirección
+     </a>
+    </article>
+   </div>
+   <details class="details-box section-space" id="formulario">
+    <summary>
+     Agregar o editar dirección
+    </summary>
+    <div class="page-heading">
+     <div>
+      <p class="eyebrow">
+       Studio 21
+      </p>
+      <h2>
+       Dirección de entrega
+      </h2>
+      <p class="muted">
+       Completa los datos del destinatario. Los campos con * son obligatorios.
+      </p>
+     </div>
+    </div>
+    <!-- Maquetado: este formulario valida con HTML y muestra la siguiente vista.
+     Los campos no envían datos ni se guardan en este avance. -->
+    <form method="get" th:action="@{/direcciones}">
+     <section class="panel">
+      <div class="form-grid">
+       <div class="field">
+        <label for="direccion-nombre">
+         Destinatario *
+        </label>
+        <input id="direccion-nombre" placeholder="Destinatario" required="" type="text"/>
+       </div>
+       <div class="field">
+        <label for="direccion-telefono">
+         Teléfono *
+        </label>
+        <input id="direccion-telefono" placeholder="Teléfono" required="" type="tel"/>
+       </div>
+       <div class="field full">
+        <label for="direccion-calle">
+         Calle y número exterior e interior *
+        </label>
+        <input id="direccion-calle" placeholder="Calle y número exterior e interior" required="" type="text"/>
+       </div>
+       <div class="field">
+        <label for="direccion-colonia">
+         Colonia *
+        </label>
+        <input id="direccion-colonia" placeholder="Colonia" required="" type="text"/>
+       </div>
+       <div class="field">
+        <label for="direccion-ciudad">
+         Ciudad o municipio *
+        </label>
+        <input id="direccion-ciudad" placeholder="Ciudad o municipio" required="" type="text"/>
+       </div>
+       <div class="field">
+        <label for="direccion-estado">
+         Estado *
+        </label>
+        <input id="direccion-estado" placeholder="Estado" required="" type="text"/>
+       </div>
+       <div class="field">
+        <label for="direccion-cp">
+         Código postal *
+        </label>
+        <input id="direccion-cp" placeholder="Código postal" required="" type="text"/>
+       </div>
+      </div>
+      <div class="form-actions">
+       <button class="btn" type="submit">
+        Guardar dirección
+        <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+         <path d="M4 12h16m-6-6 6 6-6 6">
+         </path>
+        </svg>
+       </button>
+       <a class="btn btn-outline" th:href="@{/direcciones}">
+        Cancelar
+       </a>
+      </div>
+     </section>
+    </form>
+   </details>
+  </main>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

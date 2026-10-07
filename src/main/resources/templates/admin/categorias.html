@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Categorías')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!-- La misma plantilla se completa con los datos que proporciona HomeController. -->
+  <div class="admin-layout">
+   <div th:replace="~{fragments/layout :: menu}">
+   </div>
+   <main class="admin-content" id="contenido">
+    <div class="page-heading">
+     <div>
+      <p class="eyebrow">
+       Studio 21
+      </p>
+      <h1>
+       Categorías
+      </h1>
+      <p class="muted">
+       Categorías planas para organizar las piezas.
+      </p>
+     </div>
+     <a class="btn" th:href="@{/admin/categorias#formulario}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="M12 4v16M4 12h16">
+       </path>
+      </svg>
+      Nueva categoría
+     </a>
+    </div>
+    <div aria-label="Categorías" class="table-wrap" role="region" tabindex="0">
+     <table>
+      <caption>
+       Categorías
+      </caption>
+      <thead>
+       <tr>
+        <th scope="col">
+         Nombre
+        </th>
+        <th scope="col">
+         Descripción
+        </th>
+        <th scope="col">
+         Requiere talla
+        </th>
+        <th scope="col">
+         Acción
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+         Playeras
+        </td>
+        <td>
+         Playeras de artistas y giras
+        </td>
+        <td>
+         Sí
+        </td>
+        <td>
+         <a th:href="@{/admin/categorias#formulario}">
+          Editar
+         </a>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Sudaderas
+        </td>
+        <td>
+         Sudaderas y prendas de punto
+        </td>
+        <td>
+         Sí
+        </td>
+        <td>
+         <a th:href="@{/admin/categorias#formulario}">
+          Editar
+         </a>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Vinilos
+        </td>
+        <td>
+         Discos de música
+        </td>
+        <td>
+         No
+        </td>
+        <td>
+         <a th:href="@{/admin/categorias#formulario}">
+          Editar
+         </a>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Accesorios
+        </td>
+        <td>
+         Pósters y otros accesorios
+        </td>
+        <td>
+         No
+        </td>
+        <td>
+         <a th:href="@{/admin/categorias#formulario}">
+          Editar
+         </a>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <details class="details-box section-space" id="formulario">
+     <summary>
+      Agregar o editar categoría
+     </summary>
+     <div class="page-heading">
+      <div>
+       <p class="eyebrow">
+        Studio 21
+       </p>
+       <h2>
+        Ficha de categoría
+       </h2>
+       <p class="muted">
+        Completa los datos del catálogo.
+       </p>
+      </div>
+     </div>
+     <!-- Maquetado: este formulario valida con HTML y muestra la siguiente vista.
+     Los campos no envían datos ni se guardan en este avance. -->
+     <form method="get" th:action="@{/admin/categorias}">
+      <section class="panel">
+       <div class="stack">
+        <div class="field">
+         <label for="nombre">
+          Nombre *
+         </label>
+         <input id="nombre" required="" type="text" value="Playeras"/>
+        </div>
+        <div class="field full">
+         <label for="descripcion">
+          Descripción
+         </label>
+         <textarea id="descripcion" rows="3">Playeras de artistas y giras.</textarea>
+        </div>
+        <label class="choice">
+         <input checked="" type="checkbox"/>
+         <span>
+          Corresponde a ropa y requiere talla
+         </span>
+        </label>
+       </div>
+       <div class="form-actions">
+        <button class="btn" type="submit">
+         Guardar
+         <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+          <path d="M4 12h16m-6-6 6 6-6 6">
+          </path>
+         </svg>
+        </button>
+        <a class="btn btn-outline" th:href="@{/admin/categorias}">
+         Cancelar
+        </a>
+       </div>
+      </section>
+     </form>
+    </details>
+   </main>
+  </div>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

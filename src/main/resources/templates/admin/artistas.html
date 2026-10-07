@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Artistas')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!-- La misma plantilla se completa con los datos que proporciona HomeController. -->
+  <div class="admin-layout">
+   <div th:replace="~{fragments/layout :: menu}">
+   </div>
+   <main class="admin-content" id="contenido">
+    <div class="page-heading">
+     <div>
+      <p class="eyebrow">
+       Studio 21
+      </p>
+      <h1>
+       Artistas
+      </h1>
+      <p class="muted">
+       Artistas de la mercancía; no son los donantes.
+      </p>
+     </div>
+     <a class="btn" th:href="@{/admin/artistas#formulario}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="M12 4v16M4 12h16">
+       </path>
+      </svg>
+      Nuevo artista
+     </a>
+    </div>
+    <div aria-label="Artistas" class="table-wrap" role="region" tabindex="0">
+     <table>
+      <caption>
+       Artistas
+      </caption>
+      <thead>
+       <tr>
+        <th scope="col">
+         Nombre
+        </th>
+        <th scope="col">
+         Género musical
+        </th>
+        <th scope="col">
+         Acción
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+         Taylor Swift
+        </td>
+        <td>
+         Pop
+        </td>
+        <td>
+         <a th:href="@{/admin/artistas#formulario}">
+          Editar
+         </a>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Rosalía
+        </td>
+        <td>
+         Pop
+        </td>
+        <td>
+         <a th:href="@{/admin/artistas#formulario}">
+          Editar
+         </a>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Charli XCX
+        </td>
+        <td>
+         Pop electrónico
+        </td>
+        <td>
+         <a th:href="@{/admin/artistas#formulario}">
+          Editar
+         </a>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Daft Punk
+        </td>
+        <td>
+         Electrónica
+        </td>
+        <td>
+         <a th:href="@{/admin/artistas#formulario}">
+          Editar
+         </a>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         The Strokes
+        </td>
+        <td>
+         Rock
+        </td>
+        <td>
+         <a th:href="@{/admin/artistas#formulario}">
+          Editar
+         </a>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <details class="details-box section-space" id="formulario">
+     <summary>
+      Agregar o editar artista
+     </summary>
+     <div class="page-heading">
+      <div>
+       <p class="eyebrow">
+        Studio 21
+       </p>
+       <h2>
+        Ficha de artista
+       </h2>
+       <p class="muted">
+        Completa los datos del catálogo.
+       </p>
+      </div>
+     </div>
+     <!-- Maquetado: este formulario valida con HTML y muestra la siguiente vista.
+     Los campos no envían datos ni se guardan en este avance. -->
+     <form method="get" th:action="@{/admin/artistas}">
+      <section class="panel">
+       <div class="stack">
+        <div class="field">
+         <label for="nombre">
+          Nombre *
+         </label>
+         <input id="nombre" required="" type="text" value="Taylor Swift"/>
+        </div>
+        <div class="field">
+         <label for="genero">
+          Género musical *
+         </label>
+         <input id="genero" required="" type="text" value="Pop"/>
+        </div>
+       </div>
+       <div class="form-actions">
+        <button class="btn" type="submit">
+         Guardar
+         <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+          <path d="M4 12h16m-6-6 6 6-6 6">
+          </path>
+         </svg>
+        </button>
+        <a class="btn btn-outline" th:href="@{/admin/artistas}">
+         Cancelar
+        </a>
+       </div>
+      </section>
+     </form>
+    </details>
+   </main>
+  </div>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Mi cuenta')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!-- La misma plantilla se completa con los datos que proporciona HomeController. -->
+  <main class="container" id="contenido">
+   <div class="page-heading">
+    <div>
+     <p class="eyebrow">
+      Studio 21
+     </p>
+     <h1>
+      Mi cuenta
+     </h1>
+     <p class="muted">
+      Tus datos y tus próximas historias.
+     </p>
+    </div>
+   </div>
+   <nav aria-label="Mi cuenta" class="tabs">
+    <a aria-current="page" th:href="@{/cuenta}">
+     Mis datos
+    </a>
+    <a th:href="@{/direcciones}">
+     Direcciones
+    </a>
+    <a th:href="@{/pedidos}">
+     Mis pedidos
+    </a>
+   </nav>
+   <div class="split">
+    <section class="panel">
+     <div class="account-title">
+      <div class="avatar">
+       JP
+      </div>
+      <div>
+       <h2>
+        Juan Pérez
+       </h2>
+       <p class="muted">
+        Cliente de Studio 21
+       </p>
+      </div>
+     </div>
+     <!-- Maquetado: este formulario usa validación HTML y navega a una vista de ejemplo.
+     Sin name en los campos: no envía información personal por la URL. No guarda datos. -->
+     <form method="get" th:action="@{/cuenta}">
+      <div class="form-grid">
+       <div class="field">
+        <label for="cuenta-nombre">
+         Nombre completo *
+        </label>
+        <input id="cuenta-nombre" required="" type="text" value="Juan Pérez"/>
+       </div>
+       <div class="field">
+        <label for="cuenta-tel">
+         Teléfono *
+        </label>
+        <input id="cuenta-tel" required="" type="tel" value="+52 55 1234 5678"/>
+       </div>
+       <div class="field full">
+        <label for="cuenta-email">
+         Correo electrónico *
+        </label>
+        <input id="cuenta-email" required="" type="email" value="juan.perez@ejemplo.com"/>
+       </div>
+      </div>
+      <div class="form-actions">
+       <button class="btn" type="submit">
+        Guardar cambios
+        <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+         <path d="M4 12h16m-6-6 6 6-6 6">
+         </path>
+        </svg>
+       </button>
+      </div>
+     </form>
+    </section>
+    <aside class="stack">
+     <a class="link-card" th:href="@{/direcciones}">
+      <h3>
+       Mis direcciones
+      </h3>
+      <p>
+       2 direcciones guardadas
+      </p>
+     </a>
+     <a class="link-card" th:href="@{/pedidos}">
+      <h3>
+       Mis pedidos
+      </h3>
+      <p>
+       Consulta el estado y envío de tus piezas.
+      </p>
+     </a>
+     <a class="btn btn-outline" th:href="@{/login}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="M9 4H3v16h6M9 12h12m-5-5 5 5-5 5">
+       </path>
+      </svg>
+      Cerrar sesión
+     </a>
+    </aside>
+   </div>
+  </main>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

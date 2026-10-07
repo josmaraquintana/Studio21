@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Productos')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!-- La misma plantilla se completa con los datos que proporciona HomeController. -->
+  <div class="admin-layout">
+   <div th:replace="~{fragments/layout :: menu}">
+   </div>
+   <main class="admin-content" id="contenido">
+    <div class="page-heading">
+     <div>
+      <p class="eyebrow">
+       Studio 21
+      </p>
+      <h1>
+       Productos
+      </h1>
+      <p class="muted">
+       Cada registro corresponde a una pieza física única.
+      </p>
+     </div>
+     <a class="btn" th:href="@{/admin/productos#formulario(crear='true')}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="M12 4v16M4 12h16">
+       </path>
+      </svg>
+      Nueva pieza
+     </a>
+    </div>
+    <div class="panel toolbar">
+     <div class="field">
+      <label for="busca">
+       Buscar producto
+      </label>
+      <input id="busca" placeholder="Nombre o artista" type="text"/>
+     </div>
+     <div class="field">
+      <label for="auth">
+       Autenticidad
+      </label>
+      <select id="auth">
+       <option>
+        Todas
+       </option>
+       <option>
+        Pendiente
+       </option>
+       <option>
+        Verificada
+       </option>
+       <option>
+        Rechazada
+       </option>
+      </select>
+     </div>
+     <div class="field">
+      <label for="disp">
+       Disponibilidad
+      </label>
+      <select id="disp">
+       <option>
+        Todas
+       </option>
+       <option>
+        Disponible
+       </option>
+       <option>
+        Apartada
+       </option>
+       <option>
+        Vendida
+       </option>
+      </select>
+     </div>
+     <button class="btn btn-secondary" type="button">
+      Filtrar
+     </button>
+    </div>
+    <div aria-label="Catálogo administrativo" class="table-wrap" role="region" tabindex="0">
+     <table>
+      <caption>
+       Catálogo administrativo
+      </caption>
+      <thead>
+       <tr>
+        <th scope="col">
+         Producto
+        </th>
+        <th scope="col">
+         Condición
+        </th>
+        <th scope="col">
+         Reventa USD
+        </th>
+        <th scope="col">
+         Autenticidad
+        </th>
+        <th scope="col">
+         Disponibilidad
+        </th>
+        <th scope="col">
+         Publicación
+        </th>
+        <th scope="col">
+         Acción
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr th:each="p : ${todosProductos}">
+        <td>
+         <div class="table-product">
+          <img alt="" height="50" th:src="@{/img/{archivo}(archivo=${p.img})}" width="45"/>
+          <div>
+           <strong th:text="${p.name}">
+           </strong>
+           <small th:text="${p.sku + ' · ' + p.artist}">
+           </small>
+          </div>
+         </div>
+        </td>
+        <td th:text="${p.condition + ' · ' + p.size}">
+        </td>
+        <td th:text="${p.priceText}">
+        </td>
+        <td>
+         <span class="pill" th:classappend="${p.verificado ? 'verified' : 'pending'}" th:text="${p.verificado ? 'Verificada' : 'Pendiente'}">
+         </span>
+        </td>
+        <td th:text="${p.adminStatus}">
+        </td>
+        <td th:text="${p.verificado ? 'Publicada' : 'No publicada'}">
+        </td>
+        <td>
+         <a class="table-link" th:href="@{/admin/productos(id=${p.slug})}">
+          Editar
+         </a>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <details class="details-box section-space" id="formulario" th:open="${crear or editar}">
+     <summary>
+      Ficha de producto
+     </summary>
+     <div class="page-heading">
+      <div>
+       <p class="eyebrow">
+        Studio 21
+       </p>
+       <h2 th:text="${crear ? 'Nueva pieza' : 'Editar ' + producto.name}">
+        Editar Playera Tour The Eras
+       </h2>
+       <p class="muted">
+        Completa la ficha. Los campos con * son obligatorios.
+       </p>
+      </div>
+     </div>
+     <!-- Maquetado: este formulario valida con HTML y muestra la siguiente vista.
+     Los campos no envían datos ni se guardan en este avance. -->
+     <form method="get" th:action="@{/admin/productos}">
+      <section class="panel">
+       <fieldset>
+        <legend>
+         1. Datos de la pieza
+        </legend>
+        <div class="form-grid">
+         <div class="field full">
+          <label for="nombre">
+           Nombre *
+          </label>
+          <input id="nombre" required="" th:value="${crear ? '' : producto.name}" type="text"/>
+         </div>
+         <div class="field full">
+          <label for="descripcion">
+           Descripción
+          </label>
+          <textarea id="descripcion" required="" rows="3" th:text="${crear ? '' : producto.desc}">Playera negra de la gira The Eras. Estampado frontal con fotografías de los álbumes.</textarea>
+         </div>
+         <div class="field">
+          <label for="artista">
+           Artista
+          </label>
+          <select id="artista">
+           <option th:selected="${producto.artist == 'Taylor Swift'}">
+            Taylor Swift
+           </option>
+           <option th:selected="${producto.artist == 'Rosalía'}">
+            Rosalía
+           </option>
+           <option th:selected="${producto.artist == 'Daft Punk'}">
+            Daft Punk
+           </option>
+           <option th:selected="${producto.artist == 'Charli XCX'}">
+            Charli XCX
+           </option>
+           <option th:selected="${producto.artist == 'The Strokes'}">
+            The Strokes
+           </option>
+          </select>
+         </div>
+         <div class="field">
+          <label for="categoria">
+           Categoría
+          </label>
+          <select id="categoria">
+           <option th:selected="${producto.cat == 'Playeras'}">
+            Playeras
+           </option>
+           <option th:selected="${producto.cat == 'Sudaderas'}">
+            Sudaderas
+           </option>
+           <option th:selected="${producto.cat == 'Vinilos'}">
+            Vinilos
+           </option>
+           <option th:selected="${producto.cat == 'Accesorios'}">
+            Accesorios
+           </option>
+          </select>
+         </div>
+         <div class="field">
+          <label for="talla">
+           Talla si corresponde a ropa
+          </label>
+          <input aria-describedby="talla-help" id="talla" th:value="${crear ? '' : producto.size}" type="text"/>
+          <small class="help" id="talla-help">
+           Obligatoria para ropa. Se omite en vinilos y accesorios.
+          </small>
+         </div>
+         <div class="field">
+          <label for="condicion">
+           Condición
+          </label>
+          <select id="condicion">
+           <option th:selected="${producto.condition == 'Nueva'}">
+            Nueva
+           </option>
+           <option th:selected="${producto.condition == 'Como nueva'}">
+            Como nueva
+           </option>
+           <option th:selected="${producto.condition == 'Usada con detalles'}">
+            Usada con detalles
+           </option>
+          </select>
+         </div>
+         <div class="field full">
+          <label for="desgaste">
+           Descripción del desgaste (obligatoria si está usada con detalles)
+          </label>
+          <textarea id="desgaste" rows="3" th:text="${crear ? '' : producto.wear}">Ligero desgaste en el estampado por lavado. Tela y costuras sin roturas.</textarea>
+         </div>
+        </div>
+       </fieldset>
+       <fieldset>
+        <legend>
+         2. Precios y procedencia
+        </legend>
+        <div class="form-grid">
+         <div class="field">
+          <label for="original">
+           Precio original en USD (opcional)
+          </label>
+          <input id="original" min="0" step="0.01" th:value="${crear ? '' : producto.original}" type="number"/>
+         </div>
+         <div class="field">
+          <label for="reventa">
+           Precio de reventa en USD *
+          </label>
+          <input id="reventa" min="0.01" required="" step="0.01" th:value="${crear ? '' : producto.price}" type="number"/>
+         </div>
+         <div class="field full">
+          <label for="donacion">
+           Donación de origen
+          </label>
+          <select id="donacion">
+           <option th:selected="${#strings.startsWith('DON-104 · Mariana López',producto.don)}">
+            DON-104 · Mariana López
+           </option>
+           <option th:selected="${#strings.startsWith('DON-105 · Valeria Montesino',producto.don)}">
+            DON-105 · Valeria Montesino
+           </option>
+           <option th:selected="${#strings.startsWith('DON-106 · Carlos Osorio',producto.don)}">
+            DON-106 · Carlos Osorio
+           </option>
+           <option th:selected="${#strings.startsWith('DON-107 · Andrea Beltrán',producto.don)}">
+            DON-107 · Andrea Beltrán
+           </option>
+           <option th:selected="${#strings.startsWith('DON-103 · Andrea Beltrán',producto.don)}">
+            DON-103 · Andrea Beltrán
+           </option>
+          </select>
+         </div>
+        </div>
+       </fieldset>
+       <!-- El input nativo permite elegir archivos. La vista previa es una imagen
+      de muestra; generar una vista previa dinámica requerirá JavaScript después. -->
+       <fieldset>
+        <legend>
+         3. Fotografías
+        </legend>
+        <div class="upload">
+         <label for="fotos">
+          <strong>
+           Seleccionar imágenes de la pieza
+          </strong>
+         </label>
+         <p class="small muted">
+          Vista general y detalles de su condición. JPG o PNG.
+         </p>
+         <input accept="image/jpeg,image/png" id="fotos" multiple="" type="file"/>
+        </div>
+        <p class="small muted">
+         Imagen guardada de ejemplo
+        </p>
+        <div class="preview-row">
+         <img alt="Foto guardada de Playera Tour The Eras" th:alt="${producto.name}" th:if="${!crear}" th:src="@{/img/{archivo}(archivo=${producto.img})}"/>
+        </div>
+       </fieldset>
+       <fieldset>
+        <legend>
+         4. Publicación
+        </legend>
+        <span class="pill" th:classappend="${producto.verificado and !crear ? 'verified' : 'pending'}" th:text="${producto.verificado and !crear ? 'Autenticidad verificada' : 'Pendiente de revisión'}">
+        </span>
+        <label class="choice">
+         <input th:checked="${!crear and producto.verificado}" th:disabled="${crear or !producto.verificado}" type="checkbox"/>
+         <span>
+          Publicar en el catálogo
+         </span>
+        </label>
+        <p class="small muted">
+         Solo se pueden publicar piezas verificadas. Una pieza nueva queda pendiente.
+        </p>
+       </fieldset>
+       <div class="form-actions">
+        <button class="btn" type="submit">
+         Guardar pieza
+         <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+          <path d="M4 12h16m-6-6 6 6-6 6">
+          </path>
+         </svg>
+        </button>
+        <a class="btn btn-outline" th:href="@{/admin/productos}">
+         Cancelar
+        </a>
+       </div>
+      </section>
+     </form>
+    </details>
+   </main>
+  </div>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

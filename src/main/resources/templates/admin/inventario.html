@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Inventario')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!-- La misma plantilla se completa con los datos que proporciona HomeController. -->
+  <div class="admin-layout">
+   <div th:replace="~{fragments/layout :: menu}">
+   </div>
+   <main class="admin-content" id="contenido">
+    <div class="page-heading">
+     <div>
+      <p class="eyebrow">
+       Studio 21
+      </p>
+      <h1>
+       Movimientos de inventario
+      </h1>
+      <p class="muted">
+       Cada movimiento identifica una pieza física.
+      </p>
+     </div>
+     <a class="btn" th:href="@{/admin/inventario#formulario}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="M12 4v16M4 12h16">
+       </path>
+      </svg>
+      Registrar ajuste
+     </a>
+    </div>
+    <div class="notice">
+     <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10">
+      </circle>
+      <path d="M12 11v6M12 7v1">
+      </path>
+     </svg>
+     <p>
+      Apartar, liberar o verificar una pieza no genera entradas ni salidas físicas. Una cancelación pendiente libera disponibilidad, sin sumar otra unidad.
+     </p>
+    </div>
+    <section class="section-space">
+     <div aria-label="Movimientos recientes" class="table-wrap" role="region" tabindex="0">
+      <table>
+       <caption>
+        Movimientos recientes
+       </caption>
+       <thead>
+        <tr>
+         <th scope="col">
+          Fecha
+         </th>
+         <th scope="col">
+          Pieza
+         </th>
+         <th scope="col">
+          Movimiento
+         </th>
+         <th scope="col">
+          Motivo
+         </th>
+         <th scope="col">
+          Responsable
+         </th>
+        </tr>
+       </thead>
+       <tbody>
+        <tr>
+         <td>
+          20 oct 2024
+         </td>
+         <td>
+          S21-005 · Sudadera Brat
+         </td>
+         <td>
+          <span class="pill sold">
+           −1 · Salida
+          </span>
+         </td>
+         <td>
+          Despacho ORD-8410 · DHL MX-994827103
+         </td>
+         <td>
+          Sofía Rivas
+         </td>
+        </tr>
+        <tr>
+         <td>
+          18 oct 2024
+         </td>
+         <td>
+          S21-001 · Playera The Eras
+         </td>
+         <td>
+          <span class="pill verified">
+           +1 · Entrada
+          </span>
+         </td>
+         <td>
+          Recepción DON-104
+         </td>
+         <td>
+          Carlos Mendoza
+         </td>
+        </tr>
+        <tr>
+         <td>
+          18 oct 2024
+         </td>
+         <td>
+          S21-005 · Sudadera Brat
+         </td>
+         <td>
+          <span class="pill verified">
+           +1 · Entrada
+          </span>
+         </td>
+         <td>
+          Recepción DON-104
+         </td>
+         <td>
+          Carlos Mendoza
+         </td>
+        </tr>
+        <tr>
+         <td>
+          11 oct 2024
+         </td>
+         <td>
+          S21-006 · Póster First Impressions
+         </td>
+         <td>
+          <span class="pill sold">
+           −1 · Salida
+          </span>
+         </td>
+         <td>
+          Despacho ORD-8201
+         </td>
+         <td>
+          Carlos Mendoza
+         </td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+    </section>
+    <details class="details-box section-space" id="formulario">
+     <summary>
+      Registrar ajuste físico
+     </summary>
+     <div class="page-heading">
+      <div>
+       <p class="eyebrow">
+        Studio 21
+       </p>
+       <h2>
+        Registrar ajuste
+       </h2>
+       <p class="muted">
+        Documenta una entrada o salida física real de una pieza.
+       </p>
+      </div>
+     </div>
+     <div class="notice warning">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <circle cx="12" cy="12" r="10">
+       </circle>
+       <path d="M12 11v6M12 7v1">
+       </path>
+      </svg>
+      <p>
+       El ajuste requiere un motivo. No debe usarse para cancelar pedidos ni rechazar autenticidad.
+      </p>
+     </div>
+     <!-- Maquetado: este formulario valida con HTML y muestra la siguiente vista.
+     Los campos no envían datos ni se guardan en este avance. -->
+     <form method="get" th:action="@{/admin/inventario}">
+      <section class="panel section-space">
+       <div class="form-grid">
+        <div class="field">
+         <label for="pieza">
+          Pieza
+         </label>
+         <select id="pieza">
+          <option>
+           S21-007 · Playera de gira
+          </option>
+          <option>
+           S21-003 · Cárdigan bordado
+          </option>
+         </select>
+        </div>
+        <div class="field">
+         <label for="tipo">
+          Movimiento unitario
+         </label>
+         <select id="tipo">
+          <option>
+           Salida física (−1)
+          </option>
+          <option>
+           Entrada física (+1)
+          </option>
+         </select>
+        </div>
+        <div class="field">
+         <label for="fecha">
+          Fecha *
+         </label>
+         <input id="fecha" required="" type="date" value="2024-10-24"/>
+        </div>
+        <div class="field">
+         <label for="responsable">
+          Responsable *
+         </label>
+         <input id="responsable" required="" type="text" value="Sofía Rivas"/>
+        </div>
+        <div class="field full">
+         <label for="motivo">
+          Motivo del ajuste
+         </label>
+         <textarea id="motivo" required="" rows="3"></textarea>
+        </div>
+       </div>
+       <div class="form-actions">
+        <button class="btn" type="submit">
+         Registrar ajuste
+         <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+          <path d="M4 12h16m-6-6 6 6-6 6">
+          </path>
+         </svg>
+        </button>
+        <a class="btn btn-outline" th:href="@{/admin/inventario}">
+         Cancelar
+        </a>
+       </div>
+      </section>
+     </form>
+    </details>
+   </main>
+  </div>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

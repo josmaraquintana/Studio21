@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Catálogo')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!-- La misma plantilla se completa con los datos que proporciona HomeController. -->
+  <main class="container" id="contenido">
+   <section aria-labelledby="hero-title" class="hero">
+    <div class="hero-copy">
+     <p class="eyebrow">
+      De fan a fan · Studio 21
+     </p>
+     <h1 id="hero-title">
+      Tu música.
+      <br/>
+      Otra historia.
+     </h1>
+     <p>
+      Merch original donada por fans, verificada y puesta a la venta para darle una segunda vida.
+     </p>
+     <a class="btn" href="#catalogo">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="M4 12h16m-6-6 6 6-6 6">
+       </path>
+      </svg>
+      Encuentra tu próxima pieza
+     </a>
+     <div class="hero-tags">
+      <span>
+       01 / Piezas únicas
+      </span>
+      <span>
+       02 / Autenticidad revisada
+      </span>
+      <span>
+       03 / Segunda vida
+      </span>
+     </div>
+    </div>
+    <div class="hero-art">
+     <img alt="Playera negra de Taylor Swift, colección The Eras" height="500" th:src="@{/img/playera-eras.jpg}" width="800"/>
+     <div class="hero-sticker">
+      Una pieza. Un nuevo fan.
+     </div>
+    </div>
+   </section>
+   <section class="catalog-layout" id="catalogo">
+    <details class="details-box filters">
+     <summary>
+      Buscar y filtrar
+     </summary>
+     <div class="field">
+      <label for="buscar">
+       Buscar una pieza
+      </label>
+      <input id="buscar" placeholder="Artista o producto" type="text"/>
+     </div>
+     <div class="field">
+      <label for="categoria">
+       Categoría
+      </label>
+      <select id="categoria">
+       <option>
+        Todas
+       </option>
+       <option>
+        Playeras
+       </option>
+       <option>
+        Sudaderas
+       </option>
+       <option>
+        Vinilos
+       </option>
+       <option>
+        Accesorios
+       </option>
+      </select>
+     </div>
+     <div class="field">
+      <label for="artista">
+       Artista
+      </label>
+      <select id="artista">
+       <option>
+        Todos
+       </option>
+       <option>
+        Taylor Swift
+       </option>
+       <option>
+        Rosalía
+       </option>
+       <option>
+        Daft Punk
+       </option>
+       <option>
+        Charli XCX
+       </option>
+       <option>
+        The Strokes
+       </option>
+      </select>
+     </div>
+     <div class="field">
+      <label for="condicion">
+       Condición
+      </label>
+      <select id="condicion">
+       <option>
+        Todas
+       </option>
+       <option>
+        Nueva
+       </option>
+       <option>
+        Como nueva
+       </option>
+       <option>
+        Usada con detalles
+       </option>
+      </select>
+     </div>
+     <div class="field">
+      <label for="disponibilidad">
+       Disponibilidad
+      </label>
+      <select id="disponibilidad">
+       <option>
+        Todas
+       </option>
+       <option>
+        Disponible
+       </option>
+       <option>
+        Apartada
+       </option>
+       <option>
+        Vendida
+       </option>
+      </select>
+     </div>
+     <div class="field">
+      <label for="precio-max">
+       Precio máximo en USD
+      </label>
+      <input id="precio-max" min="0" placeholder="100.00" step="0.01" type="number"/>
+     </div>
+     <button class="btn btn-block btn-secondary" type="button">
+      Aplicar filtros
+     </button>
+    </details>
+    <div>
+     <div class="catalog-toolbar">
+      <div>
+       <p class="eyebrow">
+        La colección
+       </p>
+       <h2>
+        Encuentra tu pieza
+       </h2>
+       <p class="muted small">
+        6 piezas · Todas verificadas
+       </p>
+      </div>
+      <div class="field">
+       <label for="orden">
+        Ordenar por
+       </label>
+       <select id="orden">
+        <option>
+         Más recientes
+        </option>
+        <option>
+         Precio menor a mayor
+        </option>
+        <option>
+         Nombre A–Z
+        </option>
+       </select>
+      </div>
+     </div>
+     <div class="product-grid">
+      <th:block th:each="p : ${productos}">
+       <article th:replace="~{fragments/componentes :: tarjeta(${p})}">
+       </article>
+      </th:block>
+     </div>
+    </div>
+   </section>
+   <section aria-label="Nuestra propuesta" class="feature-strip">
+    <div class="feature">
+     <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+      <path d="M20 4a5 5 0 0 0-8 2 5 5 0 0 0-8-2c-5 5 1 10 8 16 7-6 13-11 8-16Z">
+      </path>
+     </svg>
+     <div>
+      <h3>
+       Donada por fans
+      </h3>
+      <p>
+       Cada pieza comienza con una donación.
+      </p>
+     </div>
+    </div>
+    <div class="feature">
+     <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+      <path d="m5 12 4 4L19 6">
+      </path>
+      <circle cx="12" cy="12" r="10">
+      </circle>
+     </svg>
+     <div>
+      <h3>
+       Revisada por el equipo
+      </h3>
+      <p>
+       Solo publicamos mercancía verificada.
+      </p>
+     </div>
+    </div>
+    <div class="feature">
+     <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+      <path d="M9 18V5l11-2v13M9 8l11-2">
+      </path>
+      <ellipse cx="6" cy="18" rx="3" ry="3">
+      </ellipse>
+      <ellipse cx="17" cy="16" rx="3" ry="3">
+      </ellipse>
+     </svg>
+     <div>
+      <h3>
+       Única, como tu playlist
+      </h3>
+      <p>
+       La foto corresponde a la pieza que recibirás.
+      </p>
+     </div>
+    </div>
+   </section>
+  </main>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

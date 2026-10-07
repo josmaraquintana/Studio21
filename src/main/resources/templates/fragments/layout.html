@@ -1,13 +1,177 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
-<!-- cabecera -->
-<head th:fragment="head(titulo)">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title th:text="${titulo}">Studio 21</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
-    <script th:src="@{/js/main.js}" defer></script>
-</head>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:fragment="head(titulo)">
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title th:text="${titulo} + ' | Studio 21'">
+   Studio 21
+  </title>
+  <link rel="icon" th:href="@{/img/logo-claro.svg}" type="image/svg+xml"/>
+  <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+ </head>
+ <body>
+  <!-- Fragmentos compartidos para evitar repetir la navegación en todas las vistas. -->
+  <header class="site-header" th:fragment="cabecera">
+   <div class="container header-inner">
+    <a aria-label="Studio 21, inicio" th:href="@{/}">
+     <img alt="Studio 21" class="logo" height="64" th:src="@{/img/logo-claro.svg}" width="240"/>
+    </a>
+    <span class="header-label" th:if="${admin}">
+     Administración · Sofía Rivas
+    </span>
+    <nav aria-label="Navegación principal" class="site-nav">
+     <a th:attr="aria-current=${seccion == 'catalogo' ? 'page' : null}" th:href="@{/catalogo}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <rect height="7" rx="1" width="7" x="3" y="3">
+       </rect>
+       <rect height="7" rx="1" width="7" x="14" y="3">
+       </rect>
+       <rect height="7" rx="1" width="7" x="3" y="14">
+       </rect>
+       <rect height="7" rx="1" width="7" x="14" y="14">
+       </rect>
+      </svg>
+      Catálogo
+     </a>
+     <a th:attr="aria-current=${seccion == 'carrito' ? 'page' : null}" th:href="@{/carrito}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="M5 7h14l1 14H4L5 7Z">
+       </path>
+       <path d="M8 8V6a4 4 0 0 1 8 0v2">
+       </path>
+      </svg>
+      Carrito
+     </a>
+     <a th:attr="aria-current=${seccion == 'pedidos' ? 'page' : null}" th:href="@{/pedidos}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="m3 7 9-4 9 4v10l-9 4-9-4V7Zm0 0 9 5 9-5M12 12v9M8 5l9 5">
+       </path>
+      </svg>
+      Pedidos
+     </a>
+     <a th:attr="aria-current=${seccion == 'cuenta' ? 'page' : null}" th:href="@{/cuenta}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <circle cx="12" cy="7" r="4">
+       </circle>
+       <path d="M4 21v-2a8 8 0 0 1 16 0v2">
+       </path>
+      </svg>
+      Cuenta
+     </a>
+    </nav>
+   </div>
+  </header>
+  <aside class="admin-sidebar" th:fragment="menu">
+   <details open="">
+    <summary>
+     Administración
+    </summary>
+    <nav aria-label="Panel administrativo">
+     <a th:attr="aria-current=${seccion == 'resumen' ? 'page' : null}" th:href="@{/admin}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <rect height="7" rx="1" width="7" x="3" y="3">
+       </rect>
+       <rect height="7" rx="1" width="7" x="14" y="3">
+       </rect>
+       <rect height="7" rx="1" width="7" x="3" y="14">
+       </rect>
+       <rect height="7" rx="1" width="7" x="14" y="14">
+       </rect>
+      </svg>
+      Resumen
+     </a>
+     <a th:attr="aria-current=${seccion == 'productos' ? 'page' : null}" th:href="@{/admin/productos}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="M5 7h14l1 14H4L5 7Z">
+       </path>
+       <path d="M8 8V6a4 4 0 0 1 8 0v2">
+       </path>
+      </svg>
+      Productos
+     </a>
+     <a th:attr="aria-current=${seccion == 'autenticidad' ? 'page' : null}" th:href="@{/admin/autenticidad}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="m5 12 4 4L19 6">
+       </path>
+       <circle cx="12" cy="12" r="10">
+       </circle>
+      </svg>
+      Autenticidad
+     </a>
+     <a th:attr="aria-current=${seccion == 'donaciones' ? 'page' : null}" th:href="@{/admin/donaciones}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="M20 4a5 5 0 0 0-8 2 5 5 0 0 0-8-2c-5 5 1 10 8 16 7-6 13-11 8-16Z">
+       </path>
+      </svg>
+      Donaciones
+     </a>
+     <a th:attr="aria-current=${seccion == 'inventario' ? 'page' : null}" th:href="@{/admin/inventario}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="m3 7 9-4 9 4v10l-9 4-9-4V7Zm0 0 9 5 9-5M12 12v9M8 5l9 5">
+       </path>
+      </svg>
+      Inventario
+     </a>
+     <a th:attr="aria-current=${seccion == 'pedidos' ? 'page' : null}" th:href="@{/admin/pedidos}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="M2 5h12v12H2V5Zm12 5h4l4 5v2h-8">
+       </path>
+       <circle cx="6" cy="18" r="2">
+       </circle>
+       <circle cx="18" cy="18" r="2">
+       </circle>
+      </svg>
+      Pedidos
+     </a>
+     <a th:attr="aria-current=${seccion == 'categorias' ? 'page' : null}" th:href="@{/admin/categorias}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <rect height="7" rx="1" width="7" x="3" y="3">
+       </rect>
+       <rect height="7" rx="1" width="7" x="14" y="3">
+       </rect>
+       <rect height="7" rx="1" width="7" x="3" y="14">
+       </rect>
+       <rect height="7" rx="1" width="7" x="14" y="14">
+       </rect>
+      </svg>
+      Categorías
+     </a>
+     <a th:attr="aria-current=${seccion == 'artistas' ? 'page' : null}" th:href="@{/admin/artistas}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="M9 18V5l11-2v13M9 8l11-2">
+       </path>
+       <ellipse cx="6" cy="18" rx="3" ry="3">
+       </ellipse>
+       <ellipse cx="17" cy="16" rx="3" ry="3">
+       </ellipse>
+      </svg>
+      Artistas
+     </a>
+    </nav>
+   </details>
+  </aside>
+  <footer class="site-footer" th:fragment="pie">
+   <div class="container footer-inner">
+    <div>
+     <img alt="Studio 21" class="logo" height="64" th:src="@{/img/logo-oscuro.svg}" width="240"/>
+     <p>
+      Merch original. Nuevas historias.
+      <br/>
+      Donada por fans, para otros fans.
+     </p>
+    </div>
+    <nav aria-label="Enlaces del sitio" class="footer-links">
+     <a th:href="@{/catalogo}">
+      Tienda
+     </a>
+     <a th:href="@{/admin}">
+      Administración
+     </a>
+     <a th:href="@{/login}">
+      Iniciar sesión
+     </a>
+    </nav>
+   </div>
+  </footer>
+ </body>
 </html>

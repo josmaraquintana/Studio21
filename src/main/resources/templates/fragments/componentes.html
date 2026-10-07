@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <body>
+  <!-- th:fragment permite reutilizar marcado; p contiene los datos de la pieza. -->
+  <article class="product-card" th:fragment="tarjeta(p)">
+   <a class="product-image" th:href="@{/producto(id=${p.slug})}">
+    <img height="400" th:alt="${p.name}" th:src="@{/img/{archivo}(archivo=${p.img})}" width="400"/>
+    <span class="pill" th:classappend="${p.kind}" th:text="${p.status}">
+    </span>
+   </a>
+   <div class="product-body">
+    <p class="artist" th:text="${p.artist}">
+    </p>
+    <h3>
+     <a th:href="@{/producto(id=${p.slug})}" th:text="${p.name}">
+     </a>
+    </h3>
+    <p class="condition" th:text="${p.condition + (p.size == 'No aplica' ? '' : ' · Talla ' + p.size)}">
+    </p>
+    <p class="price">
+     <strong th:text="${p.priceText}">
+     </strong>
+     <small>
+      USD
+     </small>
+    </p>
+    <a class="btn btn-secondary" th:href="@{/producto(id=${p.slug})}" th:if="${p.status == 'Disponible'}">
+     Ver pieza
+    </a>
+    <button class="btn" disabled="" th:text="${p.status}" th:unless="${p.status == 'Disponible'}">
+    </button>
+    <p class="product-note">
+     <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+      <path d="m5 12 4 4L19 6">
+      </path>
+      <circle cx="12" cy="12" r="10">
+      </circle>
+     </svg>
+     Autenticidad verificada
+    </p>
+   </div>
+  </article>
+  <div class="cart-item" th:fragment="pieza(p,estado)">
+   <img height="95" th:alt="${p.name}" th:src="@{/img/{archivo}(archivo=${p.img})}" width="90"/>
+   <div>
+    <h3 th:text="${p.name}">
+    </h3>
+    <p class="muted" th:text="${p.artist + ' · ' + p.size}">
+    </p>
+    <p th:text="${p.condition + ' · Cantidad: 1'}">
+    </p>
+    <span class="pill" th:classappend="${estado == 'Disponible' ? 'available' : estado == 'Apartada' ? 'reserved' : 'sold'}" th:text="${estado}">
+    </span>
+   </div>
+   <div class="item-price">
+    <span th:text="${p.priceText}">
+    </span>
+    <small>
+     USD
+    </small>
+   </div>
+  </div>
+ </body>
+</html>

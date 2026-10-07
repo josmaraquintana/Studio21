@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Autenticidad')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!-- La misma plantilla se completa con los datos que proporciona HomeController. -->
+  <div class="admin-layout">
+   <div th:replace="~{fragments/layout :: menu}">
+   </div>
+   <main class="admin-content" id="contenido">
+    <div class="notice section-space" th:if="${verificacion != 'Pendiente'}">
+     <p th:text="${verificacion == 'Verificada' ? 'Revisión registrada. Se habilita la publicación sin publicar automáticamente.' : 'Pieza rechazada. No puede publicarse y no se genera una salida física.'}">
+     </p>
+    </div>
+    <div class="page-heading">
+     <div>
+      <p class="eyebrow">
+       Studio 21
+      </p>
+      <h1>
+       Revisión de autenticidad
+      </h1>
+      <p class="muted">
+       Una pieza pendiente de revisión.
+      </p>
+     </div>
+     <span class="pill" th:classappend="${verificacion == 'Verificada' ? 'verified' : verificacion == 'Rechazada' ? 'cancelled' : 'pending'}" th:text="${verificacion}">Pendiente</span>
+    </div>
+    <div class="split">
+     <section class="panel">
+      <img alt="Playera de gira recibida para revisión" class="detail-photo" th:src="@{/img/playera-revision.jpg}"/>
+      <h2 class="section-space">
+       Playera de gira · The Strokes
+      </h2>
+      <dl class="specs">
+       <div>
+        <dt>
+         Pieza
+        </dt>
+        <dd>
+         S21-007
+        </dd>
+       </div>
+       <div>
+        <dt>
+         Donación
+        </dt>
+        <dd>
+         DON-107
+        </dd>
+       </div>
+       <div>
+        <dt>
+         Donante
+        </dt>
+        <dd>
+         Andrea Beltrán
+        </dd>
+       </div>
+       <div>
+        <dt>
+         Recepción
+        </dt>
+        <dd>
+         24 oct 2024
+        </dd>
+       </div>
+      </dl>
+      <p class="section-space">
+       Talla M · Usada con detalles. Desgaste leve en el estampado.
+      </p>
+     </section>
+     <section class="panel">
+      <h2>
+       Registrar revisión
+      </h2>
+      <!-- Maquetado: este formulario usa validación HTML y navega a una vista de ejemplo.
+     Sin name en los campos: no envía información personal por la URL. No guarda datos. -->
+      <form method="get" th:action="@{/admin/autenticidad}">
+       <input type="hidden" name="estado" value="Verificada">
+       <div class="stack">
+        <div class="field full">
+         <label for="obs">
+          Observaciones de autenticidad
+         </label>
+         <textarea id="obs" required="" rows="3">Etiqueta y estampado por revisar.</textarea>
+        </div>
+        <div class="field">
+         <label for="responsable">
+          Responsable *
+         </label>
+         <input id="responsable" required="" type="text" value="Sofía Rivas"/>
+        </div>
+        <div class="field">
+         <label for="fecha">
+          Fecha de revisión *
+         </label>
+         <input id="fecha" required="" type="date" value="2024-10-24"/>
+        </div>
+        <div class="actions">
+         <button class="btn" type="submit">
+          Verificar autenticidad
+          <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+           <path d="M4 12h16m-6-6 6 6-6 6">
+           </path>
+          </svg>
+         </button>
+         <a class="btn btn-danger" th:href="@{/admin/autenticidad(estado='Rechazada')}">
+          Rechazar pieza
+         </a>
+        </div>
+       </div>
+      </form>
+      <hr/>
+      <div class="notice">
+       <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10">
+        </circle>
+        <path d="M12 11v6M12 7v1">
+        </path>
+       </svg>
+       <p>
+        Verificar habilita la publicación, pero no publica automáticamente. Rechazar impide publicar; no registra una salida física.
+       </p>
+      </div>
+     </section>
+    </div>
+   </main>
+  </div>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

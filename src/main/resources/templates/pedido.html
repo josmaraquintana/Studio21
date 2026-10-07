@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Pedido')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!-- La misma plantilla se completa con los datos que proporciona HomeController. -->
+  <main class="container" id="contenido">
+   <div th:class="${admin ? 'admin-layout' : ''}">
+    <th:block th:if="${admin}"><aside th:replace="~{fragments/layout :: menu}"></aside></th:block>
+    <div th:class="${admin ? 'admin-content' : ''}">
+     <div class="page-heading">
+      <div>
+       <p class="eyebrow">
+        Studio 21
+       </p>
+       <h1 th:text="${'#ORD-' + pedido.id}">
+       </h1>
+       <p class="muted" th:text="${pedido.fecha + ' · Juan Pérez'}">
+       </p>
+      </div>
+      <span class="pill" th:classappend="${pedido.kind}" th:text="${pedido.estado}">
+      </span>
+     </div>
+     <div class="notice success section-space" th:if="${confirmado}">
+      <p>
+       Tu pedido está Pendiente de pago y la pieza quedó Apartada.
+      </p>
+     </div>
+     <ol aria-label="Estado del pedido" class="timeline">
+      <li th:attr="aria-current=${i.index == pedido.indice ? 'step' : null}" th:classappend="${i.index &lt;= pedido.indice ? 'done' : ''}" th:each="paso,i : ${pasos}" th:text="${paso}">
+      </li>
+     </ol>
+     <div class="split">
+      <div class="stack">
+       <section class="panel">
+        <h2>
+         Pieza del pedido
+        </h2>
+        <div th:replace="~{fragments/componentes :: pieza(${pedido.producto},${pedido.disponibilidad})}">
+        </div>
+       </section>
+       <section class="panel">
+        <h2>
+         Dirección de este pedido
+        </h2>
+        <p>
+         Juan Pérez · +52 55 1234 5678
+         <br/>
+         Av. Insurgentes Sur 1450, Int. 4B
+         <br/>
+         Actipan, Ciudad de México, CP 03230
+        </p>
+        <p class="small muted">
+         Copia guardada al confirmar el pedido.
+        </p>
+       </section>
+       <section class="panel" th:if="${pedido.envio != ''}">
+        <h2>
+         Datos de envío
+        </h2>
+        <p th:text="${pedido.envio}">
+        </p>
+        <p>
+         Fecha de envío:
+         <span th:text="${pedido.fechaEnvio}">
+         </span>
+        </p>
+        <p>
+         Fecha de entrega:
+         <span th:text="${pedido.fechaEntrega}">
+         </span>
+        </p>
+       </section>
+       <div class="notice" th:if="${pedido.estado == 'Cancelado'}">
+        <p>
+         La pieza se liberó sin generar una entrada física de inventario.
+        </p>
+       </div>
+      </div>
+      <aside class="panel summary">
+       <h2>
+        Resumen
+       </h2>
+       <dl>
+        <div>
+         <dt>
+          Método
+         </dt>
+         <dd>
+          Transferencia
+         </dd>
+        </div>
+        <div class="total">
+         <dt>
+          Total
+         </dt>
+         <dd>
+          <span th:text="${pedido.producto.priceText}">
+          </span>
+          USD
+         </dd>
+        </div>
+       </dl>
+       <details class="details-box" id="cancelar" th:if="${pedido.estado == 'Pendiente'}">
+        <summary>
+         Cancelar pedido
+        </summary>
+        <p>
+         La pieza volverá a estar Disponible.
+        </p>
+        <a class="btn btn-danger" th:href="@{${admin ? '/admin/pedido' : '/pedido'}(id=${pedido.id},estado='Cancelado')}">
+         Confirmar cancelación
+        </a>
+       </details>
+       <div class="section-space" th:if="${admin}">
+        <!-- Los controles muestran el siguiente estado de ejemplo; no guardan cambios. -->
+        <a class="btn btn-block" th:href="@{/admin/pedido(id=${pedido.id},estado='Pagado')}" th:if="${pedido.estado == 'Pendiente'}">
+         Registrar pago
+        </a>
+        <a class="btn btn-block" th:href="@{/admin/pedido(id=${pedido.id},estado='Procesando')}" th:if="${pedido.estado == 'Pagado'}">
+         Comenzar preparación
+        </a>
+        <form class="stack" method="get" th:action="@{/admin/pedido}" th:if="${pedido.estado == 'Procesando'}">
+         <input name="id" th:value="${pedido.id}" type="hidden"/>
+         <input name="estado" type="hidden" value="Enviado"/>
+         <div class="field">
+          <label for="paqueteria">
+           Paquetería *
+          </label>
+          <input id="paqueteria" name="paqueteria" required=""/>
+         </div>
+         <div class="field">
+          <label for="guia">
+           Número de guía *
+          </label>
+          <input id="guia" name="guia" required=""/>
+         </div>
+         <div class="field">
+          <label for="fechaEnvio">
+           Fecha de envío *
+          </label>
+          <input id="fechaEnvio" name="fechaEnvio" required="" type="date"/>
+         </div>
+         <button class="btn" type="submit">
+          Marcar como enviado
+         </button>
+        </form>
+        <form class="stack" method="get" th:action="@{/admin/pedido}" th:if="${pedido.estado == 'Enviado'}">
+         <input name="id" th:value="${pedido.id}" type="hidden"/>
+         <input name="estado" type="hidden" value="Entregado"/>
+         <div class="field">
+          <label for="fechaEntrega">
+           Fecha de entrega *
+          </label>
+          <input id="fechaEntrega" name="fechaEntrega" required="" type="date"/>
+         </div>
+         <button class="btn" type="submit">
+          Registrar entrega
+         </button>
+        </form>
+       </div>
+      </aside>
+     </div>
+    </div>
+   </div>
+  </main>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>
