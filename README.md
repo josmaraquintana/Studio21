@@ -25,27 +25,10 @@ El diseño se adapta a móvil, tablet y computadora. El CSS está hecho con vari
 
 ## Cómo ejecutarlo
 
-### Desde IntelliJ IDEA
-
-1. Abre la carpeta que contiene el archivo `pom.xml`.
+1. Abre en IntelliJ IDEA la carpeta que contiene el archivo `pom.xml`.
 2. Configura el JDK 21 y carga el proyecto como Maven.
 3. Espera a que se descarguen las dependencias.
 4. Ejecuta `Studio21Application.java`.
-
-### Desde la terminal
-
-En Linux, dentro de la carpeta que contiene `pom.xml`:
-
-```bash
-chmod +x mvnw
-./mvnw spring-boot:run
-```
-
-En Windows, desde PowerShell:
-
-```powershell
-.\mvnw.cmd spring-boot:run
-```
 
 Al iniciar, abre:
 
@@ -58,7 +41,7 @@ Para revisar este avance no es necesario iniciar sesión ni configurar una base 
 
 Los productos, pedidos y donaciones utilizan datos de ejemplo. Los formularios y cambios de estado sirven para mostrar cómo será el recorrido de la aplicación; todavía no guardan información ni realizan compras o pagos reales.
 
-La autenticación, la búsqueda, la conexión con MySQL y las reglas de negocio del servidor quedan pendientes. El proyecto conserva las dependencias de JPA y MySQL, pero la configuración de la base de datos está desactivada para poder ejecutar el maquetado.
+La autenticación, la búsqueda, la conexión con MySQL y la integración de las reglas de negocio con las pantallas quedan pendientes. El proyecto conserva las dependencias de JPA y MySQL, pero la configuración de la base de datos está desactivada para poder ejecutar el maquetado.
 
 ## Archivos principales
 
