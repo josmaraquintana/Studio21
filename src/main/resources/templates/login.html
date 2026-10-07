@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Studio 21 · Ingresar')}"></head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/statics/css/styles.css}">
+    <title>login</title>
+</head>
+<body>
+    <main class="auth">
+        <form class="caja">
+            <div class="logo">✦ STUDIO <span>21</span></div>
+            <h1>Accede a tu Bóveda de Coleccionista &amp; Certificados</h1>
+            <p class="nota" style="text-align:center;font-size:13px">Accede para comprar merch original de tus artistas favoritos donado por fans a precios bajos, o gestiona tus donaciones.</p>
+            <div class="campo"><label>Correo electrónico o alias de coleccionista <span style="color:var(--ol)">Verificado</span></label>
+                <input type="text" placeholder="ej. JulianCasablancas99 o coleccionista@vault.art"></div>
+            <div th:replace="~{fragments/tarjetas :: password('Contraseña cifrada',false)}"></div>
+            <button class="btn full">Ingresar a Studio 21 →</button>
+        </form>
+        <div class="alta"><div><small>MEMBRESÍA ABIERTA</small><h3>¿Aún no tienes cuenta?</h3><p class="nota">Únete gratis a la comunidad: adquiere prendas únicas y apoya causas artísticas.</p></div>
+            <a class="btn" th:href="@{/registro}">Crear cuenta de coleccionista ›</a></div>
+    </main>
+</body>
+</html>

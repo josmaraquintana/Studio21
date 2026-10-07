@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/statics/css/styles.css}">
+    <meta charset="UTF-8">
+    <title>Tarjeta</title>
+</head>
+<body><svg th:fragment="bolsa" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 7h12l1 14H5L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+
+<!-- oferta relámpago -->
+<article th:fragment="oferta(img)" class="card flota">
+    <img th:src="@{'/img/'+${img}+'.jpg'}" alt="">
+    <span class="tag"><span class="pill ver">Etiqueta</span></span>
+    <h3>Nombre del artículo</h3><p>Descripción breve</p>
+    <div class="pie"><div><div class="antes">ANTES $00</div><div class="precio">$00 USD</div></div>
+        <a th:href="@{/producto}" class="btn bolsa"><svg th:replace="~{fragments/tarjetas :: bolsa}"></svg></a></div>
+</article>
+
+<!-- artículo del catálogo-->
+<article th:fragment="articulo(img)" class="card grande flota">
+    <img th:src="@{'/img/'+${img}+'.jpg'}" alt="">
+    <span class="tag"><span class="pill">100% solidario</span><span class="pill ver">✓ Verificado</span></span>
+    <h3>Nombre del artículo</h3><p>Descripción breve</p>
+    <div class="apoya">Apoya a: Causa</div>
+    <div class="pie"><span class="precio">$00</span>
+        <a th:href="@{/producto}" class="btn bolsa"><svg th:replace="~{fragments/tarjetas :: bolsa}"></svg></a></div>
+</article>
+
+<!-- también compraron-->
+<article th:fragment="relacionado(img)" class="card flota">
+    <img th:src="@{'/img/'+${img}+'.jpg'}" alt="">
+    <small style="text-transform:uppercase;font-size:10px">Banda</small>
+    <h3>Nombre del artículo</h3>
+    <div class="pie"><span class="precio">$00</span><a th:href="@{/producto}" class="btn bolsa"><svg th:replace="~{fragments/tarjetas :: bolsa}"></svg></a></div>
+</article>
+
+<!-- Miniatura de la galería-->
+<img th:fragment="miniatura(img)" th:src="@{'/img/'+${img}+'.jpg'}" onclick="cambiarImagenPrincipal(this)" alt="Vista">
+
+<!-- Casilla de filtro-->
+<label th:fragment="filtro(texto,n,marcado)"><input type="checkbox" th:checked="${marcado}"> <b th:text="${texto}" style="font-weight:400">Opción</b><span th:text="${n}">0</span></label>
+
+<!-- Campo de contraseña-->
+<div th:fragment="password(etiqueta,fuerza)" class="campo">
+    <label><span th:text="${etiqueta}">CONTRASEÑA</span></label>
+    <div class="passwrap"><input type="password" placeholder="••••••••••••" th:attr="oninput=${fuerza}?'evaluarFortaleza(this)':null">
+        <button type="button" onclick="alternarPassword(this)" aria-label="Mostrar contraseña">👁</button></div>
+</div>
+</body>
+</html>

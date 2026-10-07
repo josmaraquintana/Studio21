@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Studio 21 · Catálogo')}">
+    <link rel="stylesheet" th:href="@{/statics/css/styles.css}">
+    <meta charset="UTF-8">
+    <title>Registro</title>
+</head>
+<body>
+    <main class="auth">
+        <form class="caja reg">
+            <span class="pill" style="width: fit-content">Alta de miembro oficial</span>
+
+            <h1>
+                <em>Únete a Studio 21:</em> Donde los fans dan nueva vida al merch oficial a precios accesibles para todos
+            </h1>
+
+            <p class="nota" style="font-size: 14px">
+                Accede a reliquias de gira originales y destina el 100% de los excedentes netos a causas benéficas verificadas.
+            </p>
+
+            <div class="dosc">
+                <div class="campo">
+                    <label>Nombre</label>
+                    <input placeholder="Ej. Alex">
+                </div>
+                <div class="campo">
+                    <label>Apellido</label>
+                    <input placeholder="Ej. Valenzuela">
+                </div>
+            </div>
+
+            <div class="campo">
+                <label>Correo electrónico oficial</label>
+                <input type="email" placeholder="alex.v@ejemplo-archivo.com">
+            </div>
+
+            <div class="campo">
+                <label>Teléfono móvil / WhatsApp</label>
+                <div style="display: grid; grid-template-columns: 90px 1fr; gap: 8px">
+                    <input value="+52">
+                    <input placeholder="55 1234 5678">
+                </div>
+                <span class="nota">Te avisamos por WhatsApp cuando un fan publique merch de tus bandas favoritas.</span>
+            </div>
+
+            <div th:replace="~{fragments/tarjetas :: password('Contraseña segura', true)}"></div>
+
+            <div class="fuerza">
+                <i></i>
+                <i></i>
+                <i></i>
+                <i></i>
+            </div>
+
+            <span class="nota">○ Mínimo 8 caracteres &nbsp; ○ Al menos un número &nbsp; ○ Símbolo especial (!@#$)</span>
+
+            <label class="nota">
+                <input type="checkbox" style="accent-color: var(--pl)">
+                Acepto los <a href="#">Términos de Compra y Donación de Fanáticos</a> y el compromiso contra la reventa abusiva.
+            </label>
+
+            <label class="nota">
+                <input type="checkbox" checked style="accent-color: var(--pl)">
+                Deseo recibir mi <a href="#">Certificado Fiscal de Donación Deducible</a>.
+            </label>
+
+            <button class="btn full">Crear mi cuenta &amp; bóveda →</button>
+
+            <p class="nota" style="text-align: center">
+                ¿Ya tienes una cuenta en Studio 21? <a th:href="@{/login}">Inicia sesión aquí</a>
+            </p>
+        </form>
+    </main>
+</body>
+</html>
