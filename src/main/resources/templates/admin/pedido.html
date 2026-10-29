@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Pedido')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!--/* Detalle de un pedido; cada acción es un POST que regresa a esta misma página (PRG). */-->
+  <div class="admin-layout">
+   <div th:replace="~{fragments/layout :: menu}">
+   </div>
+   <main class="admin-content" id="contenido">
+    <div class="page-heading">
+     <div>
+      <p class="eyebrow">
+       <a th:href="@{/admin/pedidos}">Pedidos</a>
+      </p>
+      <h1 th:text="${'#' + pedido.numeroPedido}">
+       #ORD-8492
+      </h1>
+      <p class="muted" th:text="${(pedido.fechaCompra != null ? #temporals.format(pedido.fechaCompra, 'dd/MM/yyyy HH:mm') + ' · ' : '') + pedido.usuario.nombre + ' · ' + pedido.usuario.correo}">
+       24/10/2024 · Juan Pérez
+      </p>
+     </div>
+     <span th:replace="~{fragments/componentes :: estado(${pedido.estado})}">Pendiente</span>
+    </div>
+    <div class="notice error section-space" th:if="${error}">
+     <p th:text="${error}">Error</p>
+    </div>
+    <ol aria-label="Estado del pedido" class="timeline" th:unless="${pedido.estado.name() == 'CANCELADO'}">
+     <li th:attr="aria-current=${paso == pedido.estado ? 'step' : null}" th:classappend="${paso.ordinal() <= pedido.estado.ordinal() ? 'done' : ''}" th:each="paso : ${pasos}" th:text="${#strings.capitalize(#strings.toLowerCase(paso))}">
+      Pendiente
+     </li>
+    </ol>
+    <div class="split">
+     <div class="stack">
+      <section class="panel">
+       <h2 th:text="${#lists.size(pedido.detalles) == 1 ? 'Pieza del pedido' : 'Piezas del pedido'}">
+        Pieza del pedido
+       </h2>
+       <th:block th:each="d, i : ${pedido.detalles}">
+        <div class="cart-item">
+         <img height="95" th:alt="${d.producto.nombre}" th:if="${!d.producto.imagenes.isEmpty()}" th:src="@{${d.producto.imagenes[0].url}}" width="90"/>
+         <div>
+          <h3 th:text="${d.producto.nombre}">
+           Playera Tour The Eras
+          </h3>
+          <p class="muted" th:text="${d.producto.artista.nombre + (d.producto.talla != null ? ' · ' + d.producto.talla : '')}">
+           Taylor Swift · M
+          </p>
+          <p th:text="${#strings.capitalize(#strings.toLowerCase(#strings.replace(d.producto.condicion, '_', ' '))) + ' · Cantidad: ' + d.cantidad}">
+           Usada con detalles · Cantidad: 1
+          </p>
+          <span th:replace="~{fragments/componentes :: estado(${d.producto.estadoDisponibilidad})}">Apartada</span>
+         </div>
+         <div class="item-price">
+          <span th:text="${'$' + #numbers.formatDecimal(d.precioUnitarioCompra, 1, 'COMMA', 2, 'POINT')}">$28.00</span>
+          <small>
+           USD
+          </small>
+         </div>
+        </div>
+        <hr th:unless="${i.last}"/>
+       </th:block>
+      </section>
+      <section class="panel" th:if="${pedido.direccionEnvio != null}">
+       <h2>
+        Dirección de este pedido
+       </h2>
+       <p th:with="dir=${pedido.direccionEnvio}">
+        <span th:text="${dir.destinatario + ' · ' + dir.telefono}">Juan Pérez · +52 55 1234 5678</span>
+        <br/>
+        <span th:text="${dir.calle + ' ' + dir.numeroExterior}">Av. Insurgentes Sur 1450</span>
+        <br/>
+        <span th:text="${dir.colonia + ', ' + dir.ciudad + ', ' + dir.estado + ', CP ' + dir.codigoPostal}">Actipan, Ciudad de México, CP 03230</span>
+       </p>
+       <p class="small muted">
+        Copia guardada al confirmar el pedido.
+       </p>
+      </section>
+      <section class="panel" th:if="${pedido.paqueteria != null}">
+       <h2>
+        Datos de envío
+       </h2>
+       <p th:text="${pedido.paqueteria + ' · Guía ' + pedido.numeroGuia}">
+        DHL Express · Guía MX-994827103
+       </p>
+       <p>
+        Fecha de envío:
+        <span th:text="${#temporals.format(pedido.fechaEnvio, 'dd/MM/yyyy HH:mm')}">20/10/2024</span>
+       </p>
+       <p>
+        Fecha de entrega:
+        <span th:text="${pedido.fechaEntrega != null ? #temporals.format(pedido.fechaEntrega, 'dd/MM/yyyy HH:mm') : 'Pendiente'}">Pendiente</span>
+       </p>
+      </section>
+      <div class="notice" th:if="${pedido.estado.name() == 'CANCELADO'}">
+       <p>
+        Pedido cancelado. Las piezas se liberaron sin generar una entrada física de inventario.
+       </p>
+      </div>
+     </div>
+     <aside class="panel summary">
+      <h2>
+       Resumen
+      </h2>
+      <dl>
+       <div>
+        <dt>
+         Método
+        </dt>
+        <dd th:text="${#strings.capitalize(#strings.toLowerCase(pedido.metodoPago))}">
+         Transferencia
+        </dd>
+       </div>
+       <div class="total">
+        <dt>
+         Total
+        </dt>
+        <dd th:text="${'$' + #numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT') + ' USD'}">
+         $28.00 USD
+        </dd>
+       </div>
+      </dl>
+      <div class="section-space">
+       <!--/* Pendiente: se registra el pago solo si el cliente ya confirmó el pedido. */-->
+       <div class="notice warning" th:if="${pedido.estado.name() == 'PENDIENTE' and !pedido.confirmado}">
+        <p>El cliente todavía no confirma este pedido.</p>
+       </div>
+       <form method="post" th:action="@{/admin/pedidos/{id}/pagar(id=${pedido.id})}" th:if="${pedido.estado.name() == 'PENDIENTE' and pedido.confirmado}">
+        <button class="btn btn-block" type="submit">
+         Registrar pago
+        </button>
+       </form>
+       <form method="post" th:action="@{/admin/pedidos/{id}/procesar(id=${pedido.id})}" th:if="${pedido.estado.name() == 'PAGADO'}">
+        <button class="btn btn-block" type="submit">
+         Comenzar preparación
+        </button>
+       </form>
+       <form class="stack" method="post" th:action="@{/admin/pedidos/{id}/enviar(id=${pedido.id})}" th:if="${pedido.estado.name() == 'PROCESANDO'}">
+        <div class="field">
+         <label for="paqueteria">
+          Paquetería *
+         </label>
+         <input id="paqueteria" maxlength="100" name="paqueteria" required="" type="text"/>
+        </div>
+        <div class="field">
+         <label for="numeroGuia">
+          Número de guía *
+         </label>
+         <input id="numeroGuia" maxlength="100" name="numeroGuia" required="" type="text"/>
+        </div>
+        <div class="field">
+         <label for="fechaEnvio">
+          Fecha y hora de envío *
+         </label>
+         <input id="fechaEnvio" name="fechaEnvio" required="" type="datetime-local"/>
+        </div>
+        <button class="btn" type="submit">
+         Marcar como enviado
+        </button>
+        <p class="small muted">
+         Al enviar se registra la salida física de cada pieza en el inventario.
+        </p>
+       </form>
+       <form class="stack" method="post" th:action="@{/admin/pedidos/{id}/entregar(id=${pedido.id})}" th:if="${pedido.estado.name() == 'ENVIADO'}">
+        <div class="field">
+         <label for="fechaEntrega">
+          Fecha y hora de entrega *
+         </label>
+         <input id="fechaEntrega" name="fechaEntrega" required="" type="datetime-local"/>
+        </div>
+        <button class="btn" type="submit">
+         Registrar entrega
+        </button>
+       </form>
+      </div>
+      <details class="details-box section-space" id="cancelar" th:if="${pedido.estado.name() == 'PENDIENTE'}">
+       <summary>
+        Cancelar pedido
+       </summary>
+       <p>
+        Las piezas apartadas volverán a estar Disponibles.
+       </p>
+       <form method="post" onsubmit="return confirm('¿Cancelar este pedido?');" th:action="@{/admin/pedidos/{id}/cancelar(id=${pedido.id})}">
+        <button class="btn btn-danger" type="submit">
+         Confirmar cancelación
+        </button>
+       </form>
+      </details>
+     </aside>
+    </div>
+   </main>
+  </div>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

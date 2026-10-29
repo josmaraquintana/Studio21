@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Productos')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!--/* Los datos llegan desde ProductoController. */-->
+  <div class="admin-layout">
+   <div th:replace="~{fragments/layout :: menu}">
+   </div>
+   <main class="admin-content" id="contenido">
+    <div class="page-heading">
+     <div>
+      <p class="eyebrow">
+       Studio 21
+      </p>
+      <h1>
+       Productos
+      </h1>
+      <p class="muted">
+       Cada registro corresponde a una pieza física única.
+      </p>
+     </div>
+     <a class="btn" th:href="@{/admin/productos/nuevo}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="M12 4v16M4 12h16">
+       </path>
+      </svg>
+      Nueva pieza
+     </a>
+    </div>
+    <div class="notice success section-space" th:if="${param.guardado}">
+     <p>Pieza guardada. Las piezas nuevas quedan pendientes de revisión de autenticidad.</p>
+    </div>
+    <div class="notice success section-space" th:if="${param.eliminado}">
+     <p>Pieza eliminada.</p>
+    </div>
+    <div class="notice success section-space" th:if="${param.publicado}">
+     <p>Pieza publicada en el catálogo.</p>
+    </div>
+    <div class="notice success section-space" th:if="${param.retirado}">
+     <p>Publicación retirada. Ya puedes editar la pieza.</p>
+    </div>
+    <div class="notice error section-space" th:if="${error}">
+     <p th:text="${error}">Error</p>
+    </div>
+    <!--/* Búsqueda por GET: los filtros viajan en la URL (?buscar=...&verificacion=...). */-->
+    <form class="panel toolbar" method="get" th:action="@{/admin/productos}">
+     <div class="field search">
+      <label for="buscar">
+       Buscar producto
+      </label>
+      <input id="buscar" name="buscar" placeholder="Nombre o artista" th:value="${buscar}" type="text"/>
+     </div>
+     <div class="field">
+      <label for="verificacion">
+       Autenticidad
+      </label>
+      <select id="verificacion" name="verificacion">
+       <option value="">
+        Todas
+       </option>
+       <option th:each="e : ${estadosVerificacion}" th:selected="${e == verificacion}" th:text="${#strings.capitalize(#strings.toLowerCase(#strings.replace(e, '_', ' ')))}" th:value="${e}">
+        Pendiente
+       </option>
+      </select>
+     </div>
+     <div class="field">
+      <label for="disponibilidad">
+       Disponibilidad
+      </label>
+      <select id="disponibilidad" name="disponibilidad">
+       <option value="">
+        Todas
+       </option>
+       <option th:each="e : ${estadosDisponibilidad}" th:selected="${e == disponibilidad}" th:text="${#strings.capitalize(#strings.toLowerCase(#strings.replace(e, '_', ' ')))}" th:value="${e}">
+        Disponible
+       </option>
+      </select>
+     </div>
+     <button class="btn btn-secondary" type="submit">
+      Filtrar
+     </button>
+     <a class="btn btn-outline" th:href="@{/admin/productos}">
+      Limpiar
+     </a>
+    </form>
+    <div aria-label="Catálogo administrativo" class="table-wrap" role="region" tabindex="0">
+     <table>
+      <caption>
+       Catálogo administrativo
+      </caption>
+      <thead>
+       <tr>
+        <th scope="col">
+         Producto
+        </th>
+        <th scope="col">
+         Condición
+        </th>
+        <th scope="col">
+         Reventa USD
+        </th>
+        <th scope="col">
+         Autenticidad
+        </th>
+        <th scope="col">
+         Disponibilidad
+        </th>
+        <th scope="col">
+         Publicación
+        </th>
+        <th scope="col">
+         Acción
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr th:if="${#lists.isEmpty(productos)}">
+        <td colspan="7">
+         No hay piezas que coincidan.
+        </td>
+       </tr>
+       <tr th:each="p : ${productos}">
+        <td>
+         <div class="table-product">
+          <img alt="" height="50" th:if="${!p.imagenes.isEmpty()}" th:src="@{${p.imagenes[0].url}}" width="45"/>
+          <div>
+           <strong th:text="${p.nombre}">
+            Playera
+           </strong>
+           <small th:text="${'S21-' + #numbers.formatInteger(p.id, 3) + ' · ' + p.artista.nombre}">
+            S21-001 · Artista
+           </small>
+          </div>
+         </div>
+        </td>
+        <td th:text="${#strings.capitalize(#strings.toLowerCase(#strings.replace(p.condicion, '_', ' '))) + (p.talla != null ? ' · ' + p.talla : '')}">
+         Como nueva · M
+        </td>
+        <td th:text="${'$' + #numbers.formatDecimal(p.precioReventa, 1, 'COMMA', 2, 'POINT')}">
+         $28.00
+        </td>
+        <td>
+         <span th:replace="~{fragments/componentes :: estado(${p.estadoVerificacion})}">Pendiente</span>
+        </td>
+        <td>
+         <span th:replace="~{fragments/componentes :: estado(${p.estadoDisponibilidad})}">Disponible</span>
+        </td>
+        <td th:text="${p.activo ? 'Publicada' : 'No publicada'}">
+         No publicada
+        </td>
+        <td>
+         <div class="table-actions">
+          <a class="table-link" th:href="@{/admin/productos/editar/{id}(id=${p.id})}">
+           Editar
+          </a>
+          <a class="table-link" th:href="@{/admin/autenticidad(id=${p.id})}" th:if="${!p.activo}">
+           Revisar
+          </a>
+          <form method="post" th:action="@{/admin/productos/publicar/{id}(id=${p.id})}" th:if="${!p.activo and p.estadoVerificacion.name() == 'VERIFICADA' and p.estadoDisponibilidad.name() == 'DISPONIBLE'}">
+           <button class="link-button" type="submit">
+            Publicar
+           </button>
+          </form>
+          <form method="post" th:action="@{/admin/productos/retirar/{id}(id=${p.id})}" th:if="${p.activo and p.estadoDisponibilidad.name() == 'DISPONIBLE'}">
+           <button class="link-button" type="submit">
+            Retirar
+           </button>
+          </form>
+          <!--/* POST con confirmación: si se cancela, confirm() devuelve false y no se envía. */-->
+          <form method="post" onsubmit="return confirm('¿Eliminar esta pieza? También se borran sus movimientos de inventario.');" th:action="@{/admin/productos/eliminar/{id}(id=${p.id})}">
+           <button class="link-button danger" type="submit">
+            Eliminar
+           </button>
+          </form>
+         </div>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </main>
+  </div>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

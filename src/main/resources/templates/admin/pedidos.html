@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Gestión de pedidos')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!--/* Los datos llegan desde PedidoAdminController. */-->
+  <div class="admin-layout">
+   <div th:replace="~{fragments/layout :: menu}">
+   </div>
+   <main class="admin-content" id="contenido">
+    <div class="page-heading">
+     <div>
+      <p class="eyebrow">
+       Studio 21
+      </p>
+      <h1>
+       Pedidos
+      </h1>
+      <p class="muted">
+       Consulta pagos, preparación y entregas.
+      </p>
+     </div>
+    </div>
+    <!--/* Búsqueda por GET: los filtros viajan en la URL. */-->
+    <form class="panel toolbar" method="get" th:action="@{/admin/pedidos}">
+     <div class="field search">
+      <label for="buscar">
+       Cliente o pedido
+      </label>
+      <input id="buscar" name="buscar" placeholder="Nombre del cliente o número de pedido" th:value="${buscar}" type="text"/>
+     </div>
+     <div class="field">
+      <label for="estado">
+       Estado
+      </label>
+      <select id="estado" name="estado">
+       <option value="">
+        Todos
+       </option>
+       <option th:each="e : ${estados}" th:selected="${e == estado}" th:text="${#strings.capitalize(#strings.toLowerCase(#strings.replace(e, '_', ' ')))}" th:value="${e}">
+        Pendiente
+       </option>
+      </select>
+     </div>
+     <button class="btn btn-secondary" type="submit">
+      Filtrar
+     </button>
+     <a class="btn btn-outline" th:href="@{/admin/pedidos}">
+      Limpiar
+     </a>
+    </form>
+    <div aria-label="Pedidos" class="table-wrap" role="region" tabindex="0">
+     <table>
+      <caption>
+       Pedidos
+      </caption>
+      <thead>
+       <tr>
+        <th scope="col">
+         Pedido
+        </th>
+        <th scope="col">
+         Cliente
+        </th>
+        <th scope="col">
+         Pieza
+        </th>
+        <th scope="col">
+         Total
+        </th>
+        <th scope="col">
+         Estado
+        </th>
+        <th scope="col">
+         Acción
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr th:if="${#lists.isEmpty(pedidos)}">
+        <td colspan="6">
+         No hay pedidos que coincidan.
+        </td>
+       </tr>
+       <tr th:each="p : ${pedidos}">
+        <td>
+         <strong th:text="${p.numeroPedido}">
+          ORD-8492
+         </strong>
+         <br/>
+         <small th:if="${p.fechaCompra != null}" th:text="${#temporals.format(p.fechaCompra, 'dd/MM/yyyy')}">
+          24/10/2024
+         </small>
+        </td>
+        <td th:text="${p.usuario.nombre}">
+         Juan Pérez
+        </td>
+        <td>
+         <span th:each="d, i : ${p.detalles}" th:text="${d.producto.nombre + (i.last ? '' : ', ')}">Pieza</span>
+        </td>
+        <td th:text="${'$' + #numbers.formatDecimal(p.total, 1, 'COMMA', 2, 'POINT') + ' USD'}">
+         $28.00 USD
+        </td>
+        <td>
+         <span th:replace="~{fragments/componentes :: estado(${p.estado})}">Pendiente</span>
+        </td>
+        <td>
+         <a class="table-link" th:href="@{/admin/pedidos/{id}(id=${p.id})}">
+          Ver detalle
+         </a>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </main>
+  </div>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

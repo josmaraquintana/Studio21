@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Crear cuenta')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!-- La misma plantilla se completa con los datos que proporciona HomeController. -->
+  <main class="container" id="contenido">
+   <div class="auth-layout">
+    <aside class="auth-story">
+     <img alt="Studio 21" th:src="@{/img/logo-oscuro.svg}"/>
+     <p class="eyebrow">
+      De fan a fan
+     </p>
+     <h2>
+      Lo que amas,
+      <br/>
+      con otra historia.
+     </h2>
+     <p>
+      Encuentra merch de tus artistas favoritos y dale una segunda vida.
+     </p>
+     <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+      <path d="M9 18V5l11-2v13M9 8l11-2">
+      </path>
+      <ellipse cx="6" cy="18" rx="3" ry="3">
+      </ellipse>
+      <ellipse cx="17" cy="16" rx="3" ry="3">
+      </ellipse>
+     </svg>
+    </aside>
+    <section class="auth-form">
+     <h1>
+      Crea tu cuenta
+     </h1>
+     <p class="muted">
+      Guarda tus direcciones y consulta tus pedidos.
+     </p>
+     <!-- Maquetado: este formulario usa validación HTML y navega a una vista de ejemplo.
+     Sin name en los campos: no envía información personal por la URL. No guarda datos. -->
+     <form method="get" th:action="@{/cuenta}">
+      <div class="stack">
+       <div class="field">
+        <label for="nombre">
+         Nombre completo *
+        </label>
+        <input id="nombre" required="" type="text"/>
+       </div>
+       <div class="field">
+        <label for="telefono">
+         Teléfono *
+        </label>
+        <input id="telefono" required="" type="tel"/>
+       </div>
+       <div class="field">
+        <label for="correo">
+         Correo electrónico *
+        </label>
+        <input id="correo" placeholder="nombre@correo.com" required="" type="email"/>
+       </div>
+       <div class="field">
+        <label for="password">
+         Contraseña *
+        </label>
+        <input aria-describedby="password-help" autocomplete="new-password" id="password" minlength="8" required="" type="password"/>
+        <small class="help" id="password-help">
+         Al menos 8 caracteres.
+        </small>
+       </div>
+       <button class="btn" type="submit">
+        Crear cuenta
+        <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+         <path d="M4 12h16m-6-6 6 6-6 6">
+         </path>
+        </svg>
+       </button>
+      </div>
+     </form>
+     <p class="small section-space">
+      ¿Ya tienes cuenta?
+      <a th:href="@{/login}">
+       Inicia sesión
+      </a>
+     </p>
+    </section>
+   </div>
+  </main>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

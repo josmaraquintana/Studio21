@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Producto')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!-- La misma plantilla se completa con los datos que proporciona HomeController. -->
+  <main class="container" id="contenido">
+   <div class="page-heading">
+    <div>
+     <p class="eyebrow">
+      Studio 21
+     </p>
+     <h1>
+      Detalle de la pieza
+     </h1>
+     <p class="muted">
+      Una unidad física, una nueva historia.
+     </p>
+    </div>
+   </div>
+   <div class="product-detail">
+    <div>
+     <img class="detail-photo" th:alt="${producto.name}" th:src="@{/img/{archivo}(archivo=${producto.img})}"/>
+     <p class="small muted">
+      Se entrega la pieza fotografiada.
+     </p>
+    </div>
+    <section class="detail-info">
+     <p class="eyebrow" th:text="${producto.artist}">
+     </p>
+     <h2 th:text="${producto.name}">
+     </h2>
+     <p class="price">
+      <strong th:text="${producto.priceText}">
+      </strong>
+      USD
+     </p>
+     <p class="small muted">
+      Precio original:
+      <span th:text="${producto.originalText}">
+      </span>
+      USD
+     </p>
+     <p th:text="${producto.desc}">
+     </p>
+     <div class="actions"><span class="pill verified">Autenticidad verificada</span><span class="pill" th:classappend="${producto.kind}" th:text="${producto.status}">Disponible</span></div>
+     <dl class="specs section-space">
+      <div>
+       <dt>
+        Artista
+       </dt>
+       <dd th:text="${producto.artist}">
+       </dd>
+      </div>
+      <div>
+       <dt>
+        Categoría
+       </dt>
+       <dd th:text="${producto.cat}">
+       </dd>
+      </div>
+      <div>
+       <dt>
+        Talla
+       </dt>
+       <dd th:text="${producto.size}">
+       </dd>
+      </div>
+      <div>
+       <dt>
+        Condición
+       </dt>
+       <dd th:text="${producto.condition}">
+       </dd>
+      </div>
+     </dl>
+     <h3>
+      Condición y detalles
+     </h3>
+     <p th:text="${producto.wear}">
+     </p>
+     <a class="btn btn-block" th:href="@{/carrito(id=${producto.slug})}" th:if="${producto.status == 'Disponible'}">
+      Agregar al carrito
+     </a>
+     <button class="btn btn-block" disabled="" th:text="${producto.status}" th:unless="${producto.status == 'Disponible'}">
+     </button>
+     <p class="small muted section-space">
+      Agregar al carrito no reserva. Se aparta al confirmar el pedido.
+     </p>
+    </section>
+   </div>
+  </main>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

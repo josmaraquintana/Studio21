@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Categorías')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!--/* Los datos llegan desde CategoriaController. */-->
+  <div class="admin-layout">
+   <div th:replace="~{fragments/layout :: menu}">
+   </div>
+   <main class="admin-content" id="contenido">
+    <div class="page-heading">
+     <div>
+      <p class="eyebrow">
+       Studio 21
+      </p>
+      <h1>
+       Categorías
+      </h1>
+      <p class="muted">
+       Categorías planas para organizar las piezas.
+      </p>
+     </div>
+     <a class="btn" th:href="@{/admin/categorias#formulario}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="M12 4v16M4 12h16">
+       </path>
+      </svg>
+      Nueva categoría
+     </a>
+    </div>
+    <div class="notice success section-space" th:if="${param.guardada}">
+     <p>Categoría guardada.</p>
+    </div>
+    <div class="notice success section-space" th:if="${param.eliminada}">
+     <p>Categoría eliminada.</p>
+    </div>
+    <div class="notice error section-space" th:if="${error}">
+     <p th:text="${error}">Error</p>
+    </div>
+    <div aria-label="Categorías" class="table-wrap" role="region" tabindex="0">
+     <table>
+      <caption>
+       Categorías
+      </caption>
+      <thead>
+       <tr>
+        <th scope="col">
+         Nombre
+        </th>
+        <th scope="col">
+         Descripción
+        </th>
+        <th scope="col">
+         Requiere talla
+        </th>
+        <th scope="col">
+         Acción
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr th:if="${#lists.isEmpty(categorias)}">
+        <td colspan="4">
+         Todavía no hay categorías registradas.
+        </td>
+       </tr>
+       <tr th:each="c : ${categorias}">
+        <td th:text="${c.nombre}">
+         Playeras
+        </td>
+        <td th:text="${c.descripcion}">
+         Playeras de artistas y giras
+        </td>
+        <td th:text="${c.ropa ? 'Sí' : 'No'}">
+         Sí
+        </td>
+        <td>
+         <div class="table-actions">
+          <a class="table-link" th:href="@{/admin/categorias/editar/{id}(id=${c.id})}">
+           Editar
+          </a>
+          <!--/* Eliminar es POST para que lleve token CSRF; confirm() pide confirmación antes de enviar. */-->
+          <form method="post" onsubmit="return confirm('¿Eliminar esta categoría?');" th:action="@{/admin/categorias/eliminar/{id}(id=${c.id})}">
+           <button class="link-button danger" type="submit">
+            Eliminar
+           </button>
+          </form>
+         </div>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <details class="details-box section-space" id="formulario" th:open="${idEdicion != null} or ${formularioAbierto != null}">
+     <summary th:text="${idEdicion == null ? 'Agregar categoría' : 'Editar categoría'}">
+      Agregar o editar categoría
+     </summary>
+     <div class="page-heading">
+      <div>
+       <p class="eyebrow">
+        Studio 21
+       </p>
+       <h2>
+        Ficha de categoría
+       </h2>
+       <p class="muted">
+        Los campos con * son obligatorios.
+       </p>
+      </div>
+     </div>
+     <!--/* Sin idEdicion = crear, con idEdicion = editar. th:object vincula el formulario; th:field genera name, id y value. */-->
+     <form method="post" th:action="${idEdicion == null} ? @{/admin/categorias/nueva} : @{/admin/categorias/editar/{id}(id=${idEdicion})}" th:object="${categoria}">
+      <section class="panel">
+       <div class="stack">
+        <div class="field">
+         <label for="nombre">
+          Nombre *
+         </label>
+         <input maxlength="100" required="" th:field="*{nombre}" type="text"/>
+        </div>
+        <div class="field full">
+         <label for="descripcion">
+          Descripción
+         </label>
+         <textarea maxlength="300" rows="3" th:field="*{descripcion}"></textarea>
+        </div>
+        <label class="choice">
+         <input th:field="*{ropa}" type="checkbox"/>
+         <span>
+          Corresponde a ropa y requiere talla
+         </span>
+        </label>
+       </div>
+       <div class="form-actions">
+        <button class="btn" type="submit">
+         Guardar
+         <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+          <path d="M4 12h16m-6-6 6 6-6 6">
+          </path>
+         </svg>
+        </button>
+        <a class="btn btn-outline" th:href="@{/admin/categorias}">
+         Cancelar
+        </a>
+       </div>
+      </section>
+     </form>
+    </details>
+   </main>
+  </div>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

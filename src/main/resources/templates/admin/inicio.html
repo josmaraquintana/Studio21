@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Administración')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!--/* Los contadores y pedidos llegan desde ResumenController. */-->
+  <div class="admin-layout">
+   <div th:replace="~{fragments/layout :: menu}">
+   </div>
+   <main class="admin-content" id="contenido">
+    <div class="page-heading">
+     <div>
+      <p class="eyebrow">
+       Panel administrativo
+      </p>
+      <h1 th:text="|Hola, ${session.admin_nombre}.|">
+       Hola.
+      </h1>
+      <p class="muted">
+       Así está la tienda en este momento.
+      </p>
+     </div>
+     <a class="btn" th:href="@{/admin/donaciones#formulario}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="M12 4v16M4 12h16">
+       </path>
+      </svg>
+      Registrar donación
+     </a>
+    </div>
+    <section aria-label="Resumen de piezas" class="metric-grid">
+     <article class="metric">
+      <span class="small">
+       Pendientes de revisión
+      </span>
+      <strong th:text="${pendientes}">
+       0
+      </strong>
+      <span class="small">
+       Sin publicar
+      </span>
+     </article>
+     <article class="metric">
+      <span class="small">
+       Disponibles
+      </span>
+      <strong th:text="${disponibles}">
+       0
+      </strong>
+      <span class="small">
+       Verificadas y publicadas
+      </span>
+     </article>
+     <article class="metric">
+      <span class="small">
+       Apartadas
+      </span>
+      <strong th:text="${apartadas}">
+       0
+      </strong>
+      <span class="small">
+       En pedidos pendientes
+      </span>
+     </article>
+     <article class="metric">
+      <span class="small">
+       Vendidas
+      </span>
+      <strong th:text="${vendidas}">
+       0
+      </strong>
+      <span class="small">
+       Pago confirmado
+      </span>
+     </article>
+    </section>
+    <div class="grid-3">
+     <a class="link-card" th:href="@{/admin/autenticidad}">
+      <h3 th:text="${pendientes == 1 ? '1 pieza por revisar' : pendientes + ' piezas por revisar'}">
+       Piezas por revisar
+      </h3>
+      <p>
+       Revisa su autenticidad antes de publicarla.
+      </p>
+     </a>
+     <a class="link-card" th:href="@{/admin/pedidos}">
+      <h3>
+       Pedidos y envíos
+      </h3>
+      <p>
+       Registra pagos y prepara los despachos.
+      </p>
+     </a>
+     <a class="link-card" th:href="@{/admin/inventario}">
+      <h3>
+       Movimientos físicos
+      </h3>
+      <p>
+       Recepción y salida de cada pieza.
+      </p>
+     </a>
+    </div>
+    <section class="section-space">
+     <div aria-label="Pedidos recientes" class="table-wrap" role="region" tabindex="0">
+      <table>
+       <caption>
+        Pedidos recientes
+       </caption>
+       <thead>
+        <tr>
+         <th scope="col">
+          Pedido
+         </th>
+         <th scope="col">
+          Cliente
+         </th>
+         <th scope="col">
+          Pieza
+         </th>
+         <th scope="col">
+          Total
+         </th>
+         <th scope="col">
+          Estado
+         </th>
+         <th scope="col">
+          Acción
+         </th>
+        </tr>
+       </thead>
+       <tbody>
+        <tr th:if="${#lists.isEmpty(pedidos)}">
+         <td colspan="6">
+          Todavía no hay pedidos registrados.
+         </td>
+        </tr>
+        <tr th:each="p : ${pedidos}">
+         <td>
+          <strong th:text="${p.numeroPedido}">
+           ORD-8492
+          </strong>
+          <br/>
+          <small th:if="${p.fechaCompra != null}" th:text="${#temporals.format(p.fechaCompra, 'dd/MM/yyyy')}">
+           24/10/2024
+          </small>
+         </td>
+         <td th:text="${p.usuario.nombre}">
+          Cliente
+         </td>
+         <td>
+          <span th:each="d, i : ${p.detalles}" th:text="${d.producto.nombre + (i.last ? '' : ', ')}">Pieza</span>
+         </td>
+         <td th:text="${'$' + #numbers.formatDecimal(p.total, 1, 'COMMA', 2, 'POINT') + ' USD'}">
+          $0.00 USD
+         </td>
+         <td>
+          <span th:replace="~{fragments/componentes :: estado(${p.estado})}">Pendiente</span>
+         </td>
+         <td>
+          <a class="table-link" th:href="@{/admin/pedidos/{id}(id=${p.id})}">
+           Ver detalle
+          </a>
+         </td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+    </section>
+   </main>
+  </div>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

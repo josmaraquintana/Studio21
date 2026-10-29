@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Autenticidad')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!--/* Los datos llegan desde AutenticidadController. */-->
+  <div class="admin-layout">
+   <div th:replace="~{fragments/layout :: menu}">
+   </div>
+   <main class="admin-content" id="contenido">
+    <div class="notice success section-space" th:if="${param.verificada}">
+     <p>Revisión registrada. Se habilita la publicación sin publicar automáticamente.</p>
+    </div>
+    <div class="notice success section-space" th:if="${param.rechazada}">
+     <p>Pieza rechazada. No puede publicarse y no se genera una salida física.</p>
+    </div>
+    <div class="notice error section-space" th:if="${error}">
+     <p th:text="${error}">Error</p>
+    </div>
+    <div class="page-heading">
+     <div>
+      <p class="eyebrow">
+       Studio 21
+      </p>
+      <h1>
+       Revisión de autenticidad
+      </h1>
+      <p class="muted" th:text="${#lists.size(pendientes) == 1 ? 'Una pieza pendiente de revisión.' : #lists.size(pendientes) + ' piezas pendientes de revisión.'}">
+       Piezas pendientes de revisión.
+      </p>
+     </div>
+    </div>
+    <section class="panel section-space" th:if="${pieza == null}">
+     <p>
+      No hay piezas pendientes de revisión.
+     </p>
+     <a th:href="@{/admin/productos}">Ir a productos</a>
+    </section>
+    <div class="split" th:if="${pieza != null}">
+     <section class="panel">
+      <span th:replace="~{fragments/componentes :: estado(${pieza.estadoVerificacion})}">Pendiente</span>
+      <img class="detail-photo section-space" th:alt="${pieza.nombre}" th:if="${!pieza.imagenes.isEmpty()}" th:src="@{${pieza.imagenes[0].url}}"/>
+      <h2 class="section-space" th:text="${pieza.nombre + ' · ' + pieza.artista.nombre}">
+       Playera de gira · The Strokes
+      </h2>
+      <dl class="specs">
+       <div>
+        <dt>
+         Pieza
+        </dt>
+        <dd th:text="${'S21-' + #numbers.formatInteger(pieza.id, 3)}">
+         S21-007
+        </dd>
+       </div>
+       <div>
+        <dt>
+         Donación
+        </dt>
+        <dd>
+         <a th:href="@{/admin/donaciones/{id}(id=${pieza.donacion.id})}" th:text="${'DON-' + pieza.donacion.id}">DON-107</a>
+        </dd>
+       </div>
+       <div>
+        <dt>
+         Donante
+        </dt>
+        <dd th:text="${pieza.donacion.donante.nombre}">
+         Andrea Beltrán
+        </dd>
+       </div>
+       <div>
+        <dt>
+         Recepción
+        </dt>
+        <dd th:text="${#temporals.format(pieza.donacion.fechaRecepcion, 'dd/MM/yyyy')}">
+         24/10/2024
+        </dd>
+       </div>
+      </dl>
+      <p class="section-space" th:text="${(pieza.talla != null ? 'Talla ' + pieza.talla + ' · ' : '') + #strings.capitalize(#strings.toLowerCase(#strings.replace(pieza.condicion, '_', ' '))) + (pieza.detalleCondicion != null ? '. ' + pieza.detalleCondicion : '')}">
+       Talla M · Usada con detalles. Desgaste leve en el estampado.
+      </p>
+      <th:block th:if="${pieza.verificadoPor != null}">
+       <hr/>
+       <p class="small muted">
+        Última revisión:
+        <span th:text="${pieza.verificadoPor.nombre + ', ' + #temporals.format(pieza.fechaVerificacion, 'dd/MM/yyyy HH:mm')}">Sofía Rivas</span>
+       </p>
+       <p class="small" th:text="${pieza.evidenciaVerificacion}">Evidencia</p>
+      </th:block>
+     </section>
+     <section class="panel">
+      <h2>
+       Registrar revisión
+      </h2>
+      <div class="notice warning" th:if="${pieza.activo or pieza.estadoDisponibilidad.name() != 'DISPONIBLE'}">
+       <p>Esta pieza está publicada, apartada o vendida; no se puede revisar de nuevo.</p>
+      </div>
+      <!--/* Un solo formulario POST con dos botones: cada uno envía a su propia ruta con formaction. */-->
+      <form method="post" th:action="@{/admin/autenticidad/verificar/{id}(id=${pieza.id})}" th:unless="${pieza.activo or pieza.estadoDisponibilidad.name() != 'DISPONIBLE'}">
+       <div class="stack">
+        <div class="field full">
+         <label for="evidencia">
+          Observaciones y evidencia de autenticidad *
+         </label>
+         <textarea id="evidencia" maxlength="1000" name="evidencia" placeholder="Etiqueta, estampado, costuras, comprobantes..." required="" rows="4"></textarea>
+        </div>
+        <p class="small muted">
+         Responsable:
+         <strong th:text="${session.admin_nombre}">Administrador</strong>
+         · La fecha se registra automáticamente.
+        </p>
+        <div class="actions">
+         <button class="btn" type="submit">
+          Verificar autenticidad
+          <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+           <path d="M4 12h16m-6-6 6 6-6 6">
+           </path>
+          </svg>
+         </button>
+         <button class="btn btn-danger" th:formaction="@{/admin/autenticidad/rechazar/{id}(id=${pieza.id})}" type="submit">
+          Rechazar pieza
+         </button>
+        </div>
+       </div>
+      </form>
+      <hr/>
+      <div class="notice">
+       <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10">
+        </circle>
+        <path d="M12 11v6M12 7v1">
+        </path>
+       </svg>
+       <p>
+        Verificar habilita la publicación, pero no publica automáticamente. Rechazar impide publicar; no registra una salida física.
+       </p>
+      </div>
+     </section>
+    </div>
+    <section class="section-space" th:if="${!#lists.isEmpty(pendientes)}">
+     <div aria-label="Piezas pendientes" class="table-wrap" role="region" tabindex="0">
+      <table>
+       <caption>
+        Piezas pendientes de revisión
+       </caption>
+       <thead>
+        <tr>
+         <th scope="col">
+          Pieza
+         </th>
+         <th scope="col">
+          Artista
+         </th>
+         <th scope="col">
+          Donación
+         </th>
+         <th scope="col">
+          Acción
+         </th>
+        </tr>
+       </thead>
+       <tbody>
+        <tr th:each="p : ${pendientes}">
+         <td th:text="${'S21-' + #numbers.formatInteger(p.id, 3) + ' · ' + p.nombre}">
+          S21-007 · Playera de gira
+         </td>
+         <td th:text="${p.artista.nombre}">
+          The Strokes
+         </td>
+         <td th:text="${'DON-' + p.donacion.id}">
+          DON-107
+         </td>
+         <td>
+          <a class="table-link" th:href="@{/admin/autenticidad(id=${p.id})}">
+           Revisar
+          </a>
+         </td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+    </section>
+   </main>
+  </div>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

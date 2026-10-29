@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Inventario')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!--/* Los datos llegan desde InventarioController. */-->
+  <div class="admin-layout">
+   <div th:replace="~{fragments/layout :: menu}">
+   </div>
+   <main class="admin-content" id="contenido">
+    <div class="page-heading">
+     <div>
+      <p class="eyebrow">
+       Studio 21
+      </p>
+      <h1>
+       Movimientos de inventario
+      </h1>
+      <p class="muted">
+       Cada movimiento identifica una pieza física.
+      </p>
+     </div>
+     <a class="btn" th:href="@{/admin/inventario#formulario}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="M12 4v16M4 12h16">
+       </path>
+      </svg>
+      Registrar ajuste
+     </a>
+    </div>
+    <div class="notice success section-space" th:if="${param.registrado}">
+     <p>Ajuste registrado.</p>
+    </div>
+    <div class="notice error section-space" th:if="${error}">
+     <p th:text="${error}">Error</p>
+    </div>
+    <div class="notice">
+     <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10">
+      </circle>
+      <path d="M12 11v6M12 7v1">
+      </path>
+     </svg>
+     <p>
+      Apartar, liberar o verificar una pieza no genera entradas ni salidas físicas. Una cancelación pendiente libera disponibilidad, sin sumar otra unidad.
+     </p>
+    </div>
+    <section class="section-space">
+     <div aria-label="Movimientos recientes" class="table-wrap" role="region" tabindex="0">
+      <table>
+       <caption>
+        Movimientos recientes
+       </caption>
+       <thead>
+        <tr>
+         <th scope="col">
+          Fecha
+         </th>
+         <th scope="col">
+          Pieza
+         </th>
+         <th scope="col">
+          Movimiento
+         </th>
+         <th scope="col">
+          Motivo
+         </th>
+         <th scope="col">
+          Responsable
+         </th>
+        </tr>
+       </thead>
+       <tbody>
+        <tr th:if="${#lists.isEmpty(movimientos)}">
+         <td colspan="5">
+          Todavía no hay movimientos registrados.
+         </td>
+        </tr>
+        <tr th:each="m : ${movimientos}">
+         <td th:text="${#temporals.format(m.fecha, 'dd/MM/yyyy HH:mm')}">
+          20/10/2024
+         </td>
+         <td th:text="${'S21-' + #numbers.formatInteger(m.producto.id, 3) + ' · ' + m.producto.nombre}">
+          S21-005 · Sudadera Brat
+         </td>
+         <td>
+          <span class="pill" th:classappend="${m.cambioCantidad > 0 ? 'verified' : 'sold'}" th:text="${m.cambioCantidad > 0 ? '+1 · Entrada' : '−1 · Salida'}">
+           +1 · Entrada
+          </span>
+         </td>
+         <td th:text="${m.motivo}">
+          Recepción DON-104
+         </td>
+         <td th:text="${m.registradoPor.nombre}">
+          Sofía Rivas
+         </td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+    </section>
+    <details class="details-box section-space" id="formulario" th:open="${formularioAbierto != null}">
+     <summary>
+      Registrar ajuste físico
+     </summary>
+     <div class="page-heading">
+      <div>
+       <p class="eyebrow">
+        Studio 21
+       </p>
+       <h2>
+        Registrar ajuste
+       </h2>
+       <p class="muted">
+        Documenta una entrada o salida física real de una pieza.
+       </p>
+      </div>
+     </div>
+     <div class="notice warning">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <circle cx="12" cy="12" r="10">
+       </circle>
+       <path d="M12 11v6M12 7v1">
+       </path>
+      </svg>
+      <p>
+       El ajuste requiere un motivo. No debe usarse para cancelar pedidos ni rechazar autenticidad.
+      </p>
+     </div>
+     <form method="post" th:action="@{/admin/inventario/ajuste}">
+      <section class="panel section-space">
+       <div class="form-grid">
+        <div class="field">
+         <label for="productoId">
+          Pieza *
+         </label>
+         <select id="productoId" name="productoId" required="">
+          <option value="">
+           Selecciona la pieza
+          </option>
+          <option th:each="p : ${productos}" th:text="${'S21-' + #numbers.formatInteger(p.id, 3) + ' · ' + p.nombre}" th:value="${p.id}">
+           S21-007 · Playera de gira
+          </option>
+         </select>
+        </div>
+        <div class="field">
+         <label for="cambio">
+          Movimiento unitario *
+         </label>
+         <select id="cambio" name="cambio" required="">
+          <option value="-1">
+           Salida física (−1)
+          </option>
+          <option value="1">
+           Entrada física (+1)
+          </option>
+         </select>
+        </div>
+        <div class="field full">
+         <label for="motivo">
+          Motivo del ajuste *
+         </label>
+         <textarea id="motivo" maxlength="200" name="motivo" required="" rows="3"></textarea>
+        </div>
+       </div>
+       <p class="small muted">
+        Responsable:
+        <strong th:text="${session.admin_nombre}">Administrador</strong>
+        · La fecha se registra automáticamente.
+       </p>
+       <div class="form-actions">
+        <button class="btn" type="submit">
+         Registrar ajuste
+         <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+          <path d="M4 12h16m-6-6 6 6-6 6">
+          </path>
+         </svg>
+        </button>
+        <a class="btn btn-outline" th:href="@{/admin/inventario}">
+         Cancelar
+        </a>
+       </div>
+      </section>
+     </form>
+    </details>
+   </main>
+  </div>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

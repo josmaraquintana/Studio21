@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Donación')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!--/* Detalle de una donación: donante, recepción y piezas registradas. */-->
+  <div class="admin-layout">
+   <div th:replace="~{fragments/layout :: menu}">
+   </div>
+   <main class="admin-content" id="contenido">
+    <div class="notice success section-space" th:if="${param.registrada}">
+     <p>Donación registrada. Ahora registra las piezas recibidas.</p>
+    </div>
+    <div class="page-heading">
+     <div>
+      <p class="eyebrow">
+       Studio 21
+      </p>
+      <h1 th:text="${'Donación #DON-' + donacion.id}">
+       Donación #DON-104
+      </h1>
+      <p class="muted" th:text="${'Recibida el ' + #temporals.format(donacion.fechaRecepcion, 'dd/MM/yyyy HH:mm')}">
+       Recibida el 18/10/2024.
+      </p>
+     </div>
+     <div class="actions">
+      <a class="btn" th:href="@{/admin/productos/nuevo(donacionId=${donacion.id})}">
+       <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+        <path d="M12 4v16M4 12h16">
+        </path>
+       </svg>
+       Registrar pieza
+      </a>
+      <a class="btn btn-outline" th:href="@{/admin/donaciones}">
+       Volver al listado
+      </a>
+     </div>
+    </div>
+    <div class="grid-2">
+     <section class="panel">
+      <h2>
+       Donante
+      </h2>
+      <p>
+       <strong th:text="${donacion.donante.nombre}">
+        Mariana López
+       </strong>
+       <br/>
+       <span th:text="${donacion.donante.telefono}">+52 55 4192 8810</span>
+       <th:block th:if="${donacion.donante.correo != null}">
+        <br/>
+        <span th:text="${donacion.donante.correo}">correo@ejemplo.com</span>
+       </th:block>
+      </p>
+      <p class="small muted">
+       No requiere cuenta de cliente.
+      </p>
+     </section>
+     <section class="panel">
+      <h2>
+       Recepción
+      </h2>
+      <p>
+       <strong th:text="${donacion.recibidoPor.nombre}">
+        Carlos Mendoza
+       </strong>
+       <br/>
+       <span th:text="${#temporals.format(donacion.fechaRecepcion, 'dd/MM/yyyy HH:mm')}">18/10/2024 10:15</span>
+      </p>
+      <p th:text="${donacion.observaciones != null ? donacion.observaciones : 'Sin observaciones.'}">
+       Sin observaciones.
+      </p>
+     </section>
+    </div>
+    <section class="panel section-space">
+     <h2>
+      Piezas recibidas
+     </h2>
+     <p class="muted" th:if="${#lists.isEmpty(donacion.productos)}">
+      Todavía no hay piezas registradas para esta donación.
+     </p>
+     <th:block th:each="p, i : ${donacion.productos}">
+      <div class="cart-item">
+       <img height="95" th:alt="${p.nombre}" th:if="${!p.imagenes.isEmpty()}" th:src="@{${p.imagenes[0].url}}" width="90"/>
+       <div>
+        <h3>
+         <a th:href="@{/admin/productos/editar/{id}(id=${p.id})}" th:text="${p.nombre}">Playera Tour The Eras</a>
+        </h3>
+        <p class="muted" th:text="${p.artista.nombre + (p.talla != null ? ' · ' + p.talla : '')}">
+         Taylor Swift · M
+        </p>
+        <p th:text="${#strings.capitalize(#strings.toLowerCase(#strings.replace(p.condicion, '_', ' '))) + ' · Cantidad: 1'}">
+         Usada con detalles · Cantidad: 1
+        </p>
+        <span th:replace="~{fragments/componentes :: estado(${p.estadoDisponibilidad})}">Disponible</span>
+        <span th:replace="~{fragments/componentes :: estado(${p.estadoVerificacion})}">Pendiente</span>
+       </div>
+       <div class="item-price">
+        <span th:text="${'$' + #numbers.formatDecimal(p.precioReventa, 1, 'COMMA', 2, 'POINT')}">$28.00</span>
+        <small>
+         USD
+        </small>
+       </div>
+      </div>
+      <hr th:unless="${i.last}"/>
+     </th:block>
+    </section>
+   </main>
+  </div>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

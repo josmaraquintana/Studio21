@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Carrito')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!-- La misma plantilla se completa con los datos que proporciona HomeController. -->
+  <main class="container" id="contenido">
+   <div class="page-heading">
+    <div>
+     <p class="eyebrow">
+      Studio 21
+     </p>
+     <h1>
+      Tu carrito
+     </h1>
+     <p class="muted">
+      Cada pieza tiene cantidad fija en 1.
+     </p>
+    </div>
+   </div>
+   <!-- th:if presenta el carrito vacío o con una pieza sin crear otro archivo. -->
+   <section class="panel empty" th:if="${producto == null}">
+    <h2>
+     Tu carrito espera una historia
+    </h2>
+    <p>
+     Encuentra una pieza de tus artistas favoritos.
+    </p>
+    <a class="btn" th:href="@{/catalogo}">
+     Explorar catálogo
+    </a>
+   </section>
+   <div class="split" th:if="${producto != null}">
+    <section class="panel">
+     <div th:replace="~{fragments/componentes :: pieza(${producto},${producto.status})}">
+     </div>
+     <div class="actions section-space">
+      <a class="btn btn-outline" th:href="@{/carrito}">
+       Eliminar pieza
+      </a>
+      <a th:href="@{/catalogo}">
+       Seguir explorando
+      </a>
+     </div>
+     <div class="notice warning section-space" th:unless="${producto.status == 'Disponible'}">
+      <p>
+       La pieza ya no está disponible. Retírala para continuar.
+      </p>
+     </div>
+    </section>
+    <aside class="panel summary">
+     <h2>
+      Resumen del pedido
+     </h2>
+     <dl>
+      <div>
+       <dt>
+        Piezas
+       </dt>
+       <dd>
+        1
+       </dd>
+      </div>
+      <div class="total">
+       <dt>
+        Total
+       </dt>
+       <dd>
+        <span th:text="${producto.priceText}">
+        </span>
+        USD
+       </dd>
+      </div>
+     </dl>
+     <a class="btn btn-block" th:href="@{/checkout(id=${producto.slug})}" th:if="${producto.status == 'Disponible'}">
+      Continuar al pago
+     </a>
+     <button class="btn btn-block" disabled="" th:unless="${producto.status == 'Disponible'}">
+      Continuar al pago
+     </button>
+     <p class="small muted section-space">
+      Agregar al carrito no aparta la pieza.
+     </p>
+    </aside>
+   </div>
+  </main>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

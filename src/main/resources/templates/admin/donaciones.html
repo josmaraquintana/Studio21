@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Donaciones')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!--/* Los datos llegan desde DonacionController. */-->
+  <div class="admin-layout">
+   <div th:replace="~{fragments/layout :: menu}">
+   </div>
+   <main class="admin-content" id="contenido">
+    <div class="page-heading">
+     <div>
+      <p class="eyebrow">
+       Studio 21
+      </p>
+      <h1>
+       Donaciones y donantes
+      </h1>
+      <p class="muted">
+       El origen de cada pieza que recibe Studio 21.
+      </p>
+     </div>
+     <a class="btn" th:href="@{/admin/donaciones#formulario}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="M12 4v16M4 12h16">
+       </path>
+      </svg>
+      Registrar donación
+     </a>
+    </div>
+    <div class="notice success section-space" th:if="${param.eliminada}">
+     <p>Donación eliminada.</p>
+    </div>
+    <div class="notice error section-space" th:if="${error}">
+     <p th:text="${error}">Error</p>
+    </div>
+    <div class="notice">
+     <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10">
+      </circle>
+      <path d="M12 11v6M12 7v1">
+      </path>
+     </svg>
+     <p>
+      Los donantes no necesitan cuenta de usuario. Las piezas se reciben sin pago al donante.
+     </p>
+    </div>
+    <section class="section-space">
+     <div aria-label="Donaciones recibidas" class="table-wrap" role="region" tabindex="0">
+      <table>
+       <caption>
+        Donaciones recibidas
+       </caption>
+       <thead>
+        <tr>
+         <th scope="col">
+          Folio
+         </th>
+         <th scope="col">
+          Donante
+         </th>
+         <th scope="col">
+          Recepción
+         </th>
+         <th scope="col">
+          Piezas
+         </th>
+         <th scope="col">
+          Responsable
+         </th>
+         <th scope="col">
+          Acción
+         </th>
+        </tr>
+       </thead>
+       <tbody>
+        <tr th:if="${#lists.isEmpty(donaciones)}">
+         <td colspan="6">
+          Todavía no hay donaciones registradas.
+         </td>
+        </tr>
+        <tr th:each="d : ${donaciones}">
+         <td th:text="${'DON-' + d.id}">
+          DON-104
+         </td>
+         <td th:text="${d.donante.nombre}">
+          Mariana López
+         </td>
+         <td th:text="${#temporals.format(d.fechaRecepcion, 'dd/MM/yyyy')}">
+          18/10/2024
+         </td>
+         <td th:text="${#lists.size(d.productos)}">
+          2
+         </td>
+         <td th:text="${d.recibidoPor.nombre}">
+          Carlos Mendoza
+         </td>
+         <td>
+          <div class="table-actions">
+           <a class="table-link" th:href="@{/admin/donaciones/{id}(id=${d.id})}">
+            Ver detalle
+           </a>
+           <form method="post" onsubmit="return confirm('¿Eliminar esta donación?');" th:action="@{/admin/donaciones/eliminar/{id}(id=${d.id})}" th:if="${#lists.isEmpty(d.productos)}">
+            <button class="link-button danger" type="submit">
+             Eliminar
+            </button>
+           </form>
+          </div>
+         </td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+    </section>
+    <details class="details-box section-space" id="formulario" th:open="${formularioAbierto != null}">
+     <summary>
+      Registrar donación
+     </summary>
+     <div class="page-heading">
+      <div>
+       <p class="eyebrow">
+        Studio 21
+       </p>
+       <h2>
+        Registrar donación
+       </h2>
+       <p class="muted">
+        Selecciona al donante o captura sus datos. Después podrás registrar las piezas recibidas.
+       </p>
+      </div>
+     </div>
+     <form method="post" th:action="@{/admin/donaciones/nueva}">
+      <section class="panel">
+       <fieldset>
+        <legend>
+         1. Donante
+        </legend>
+        <div class="field">
+         <label for="donanteId">
+          Donante registrado
+         </label>
+         <select id="donanteId" name="donanteId">
+          <option value="">
+           Es una persona nueva
+          </option>
+          <option th:each="dn : ${donantes}" th:text="${dn.nombre + ' · ' + dn.telefono}" th:value="${dn.id}">
+           Mariana López
+          </option>
+         </select>
+        </div>
+        <p class="small muted section-space">
+         Si es una persona nueva, deja "Es una persona nueva" y registra sus datos.
+        </p>
+        <div class="form-grid">
+         <div class="field">
+          <label for="donanteNombre">
+           Nombre
+          </label>
+          <input id="donanteNombre" maxlength="100" name="donanteNombre" th:value="${param.donanteNombre != null ? param.donanteNombre[0] : ''}" type="text"/>
+         </div>
+         <div class="field">
+          <label for="donanteTelefono">
+           Teléfono
+          </label>
+          <input id="donanteTelefono" maxlength="20" name="donanteTelefono" th:value="${param.donanteTelefono != null ? param.donanteTelefono[0] : ''}" type="tel"/>
+         </div>
+         <div class="field full">
+          <label for="donanteCorreo">
+           Correo opcional
+          </label>
+          <input id="donanteCorreo" maxlength="150" name="donanteCorreo" th:value="${param.donanteCorreo != null ? param.donanteCorreo[0] : ''}" type="email"/>
+         </div>
+        </div>
+       </fieldset>
+       <fieldset>
+        <legend>
+         2. Recepción
+        </legend>
+        <div class="form-grid">
+         <div class="field">
+          <label for="fechaRecepcion">
+           Fecha y hora de recepción *
+          </label>
+          <input id="fechaRecepcion" name="fechaRecepcion" required="" th:value="${param.fechaRecepcion != null ? param.fechaRecepcion[0] : ''}" type="datetime-local"/>
+         </div>
+         <div class="field">
+          <span class="field-label">
+           Administrador receptor
+          </span>
+          <p th:text="${session.admin_nombre}">
+           Administrador
+          </p>
+         </div>
+         <div class="field full">
+          <label for="observaciones">
+           Observaciones de entrega
+          </label>
+          <textarea id="observaciones" maxlength="500" name="observaciones" rows="3" th:text="${param.observaciones != null ? param.observaciones[0] : ''}"></textarea>
+         </div>
+        </div>
+       </fieldset>
+       <div class="form-actions">
+        <button class="btn" type="submit">
+         Registrar donación
+         <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+          <path d="M4 12h16m-6-6 6 6-6 6">
+          </path>
+         </svg>
+        </button>
+        <a class="btn btn-outline" th:href="@{/admin/donaciones}">
+         Cancelar
+        </a>
+       </div>
+      </section>
+     </form>
+    </details>
+   </main>
+  </div>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

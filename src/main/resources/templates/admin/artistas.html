@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Artistas')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!--/* Los datos llegan desde ArtistaController. */-->
+  <div class="admin-layout">
+   <div th:replace="~{fragments/layout :: menu}">
+   </div>
+   <main class="admin-content" id="contenido">
+    <div class="page-heading">
+     <div>
+      <p class="eyebrow">
+       Studio 21
+      </p>
+      <h1>
+       Artistas
+      </h1>
+      <p class="muted">
+       Artistas de la mercancía; no son los donantes.
+      </p>
+     </div>
+     <a class="btn" th:href="@{/admin/artistas#formulario}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="M12 4v16M4 12h16">
+       </path>
+      </svg>
+      Nuevo artista
+     </a>
+    </div>
+    <div class="notice success section-space" th:if="${param.guardado}">
+     <p>Artista guardado.</p>
+    </div>
+    <div class="notice success section-space" th:if="${param.eliminado}">
+     <p>Artista eliminado.</p>
+    </div>
+    <div class="notice error section-space" th:if="${error}">
+     <p th:text="${error}">Error</p>
+    </div>
+    <div aria-label="Artistas" class="table-wrap" role="region" tabindex="0">
+     <table>
+      <caption>
+       Artistas
+      </caption>
+      <thead>
+       <tr>
+        <th scope="col">
+         Nombre
+        </th>
+        <th scope="col">
+         Género musical
+        </th>
+        <th scope="col">
+         Acción
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr th:if="${#lists.isEmpty(artistas)}">
+        <td colspan="3">
+         Todavía no hay artistas registrados.
+        </td>
+       </tr>
+       <tr th:each="a : ${artistas}">
+        <td th:text="${a.nombre}">
+         Taylor Swift
+        </td>
+        <td th:text="${a.generoMusical}">
+         Pop
+        </td>
+        <td>
+         <div class="table-actions">
+          <a class="table-link" th:href="@{/admin/artistas/editar/{id}(id=${a.id})}">
+           Editar
+          </a>
+          <!--/* Eliminar es POST para que lleve token CSRF; confirm() pide confirmación antes de enviar. */-->
+          <form method="post" onsubmit="return confirm('¿Eliminar este artista?');" th:action="@{/admin/artistas/eliminar/{id}(id=${a.id})}">
+           <button class="link-button danger" type="submit">
+            Eliminar
+           </button>
+          </form>
+         </div>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <details class="details-box section-space" id="formulario" th:open="${idEdicion != null} or ${formularioAbierto != null}">
+     <summary th:text="${idEdicion == null ? 'Agregar artista' : 'Editar artista'}">
+      Agregar o editar artista
+     </summary>
+     <div class="page-heading">
+      <div>
+       <p class="eyebrow">
+        Studio 21
+       </p>
+       <h2>
+        Ficha de artista
+       </h2>
+       <p class="muted">
+        Los campos con * son obligatorios.
+       </p>
+      </div>
+     </div>
+     <!--/* Sin idEdicion = crear, con idEdicion = editar. th:object vincula el formulario; th:field genera name, id y value. */-->
+     <form method="post" th:action="${idEdicion == null} ? @{/admin/artistas/nuevo} : @{/admin/artistas/editar/{id}(id=${idEdicion})}" th:object="${artista}">
+      <section class="panel">
+       <div class="stack">
+        <div class="field">
+         <label for="nombre">
+          Nombre *
+         </label>
+         <input maxlength="100" required="" th:field="*{nombre}" type="text"/>
+        </div>
+        <div class="field">
+         <label for="generoMusical">
+          Género musical *
+         </label>
+         <input maxlength="100" required="" th:field="*{generoMusical}" type="text"/>
+        </div>
+       </div>
+       <div class="form-actions">
+        <button class="btn" type="submit">
+         Guardar
+         <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+          <path d="M4 12h16m-6-6 6 6-6 6">
+          </path>
+         </svg>
+        </button>
+        <a class="btn btn-outline" th:href="@{/admin/artistas}">
+         Cancelar
+        </a>
+       </div>
+      </section>
+     </form>
+    </details>
+   </main>
+  </div>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

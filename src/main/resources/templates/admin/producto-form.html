@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Ficha de producto')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!--/* Mismo formulario para crear y editar: sin id = crear, con id = editar. */-->
+  <div class="admin-layout">
+   <div th:replace="~{fragments/layout :: menu}">
+   </div>
+   <main class="admin-content" id="contenido">
+    <div class="page-heading">
+     <div>
+      <p class="eyebrow">
+       Studio 21
+      </p>
+      <h2 th:text="${producto.id == null ? 'Nueva pieza' : 'Editar ' + producto.nombre}">
+       Nueva pieza
+      </h2>
+      <p class="muted">
+       Completa la ficha. Los campos con * son obligatorios.
+      </p>
+     </div>
+     <a class="btn btn-outline" th:href="@{/admin/productos}">
+      Volver al listado
+     </a>
+    </div>
+    <div class="notice error section-space" th:if="${error}">
+     <p th:text="${error}">Error</p>
+    </div>
+    <div class="notice warning section-space" th:if="${producto.id != null and producto.activo}">
+     <p>La pieza está publicada. Retira la publicación desde el listado antes de editarla.</p>
+    </div>
+    <div class="notice warning section-space" th:if="${producto.id != null and producto.estadoDisponibilidad.name() != 'DISPONIBLE'}">
+     <p>La pieza está apartada o vendida; ya no se puede editar.</p>
+    </div>
+    <div class="notice warning section-space" th:if="${producto.id == null and #lists.isEmpty(donaciones)}">
+     <p>
+      Antes de dar de alta una pieza registra la donación de la que proviene.
+      <a th:href="@{/admin/donaciones#formulario}">Registrar donación</a>
+     </p>
+    </div>
+    <!--/* enctype multipart: sin este atributo el servidor no puede leer la fotografía. th:action agrega el token CSRF. */-->
+    <form enctype="multipart/form-data" method="post" th:action="${producto.id == null} ? @{/admin/productos/nuevo} : @{/admin/productos/editar/{id}(id=${producto.id})}">
+     <section class="panel">
+      <fieldset>
+       <legend>
+        1. Datos de la pieza
+       </legend>
+       <div class="form-grid">
+        <div class="field full">
+         <label for="nombre">
+          Nombre *
+         </label>
+         <input id="nombre" maxlength="100" name="nombre" required="" th:value="${producto.nombre}" type="text"/>
+        </div>
+        <div class="field full">
+         <label for="descripcion">
+          Descripción *
+         </label>
+         <textarea id="descripcion" maxlength="500" name="descripcion" required="" rows="3" th:text="${producto.descripcion}"></textarea>
+        </div>
+        <div class="field">
+         <label for="artistaId">
+          Artista *
+         </label>
+         <select id="artistaId" name="artistaId" required="">
+          <option value="">
+           Selecciona un artista
+          </option>
+          <option th:each="a : ${artistas}" th:selected="${producto.artista?.id == a.id}" th:text="${a.nombre}" th:value="${a.id}">
+           Taylor Swift
+          </option>
+         </select>
+        </div>
+        <div class="field">
+         <label for="categoriaId">
+          Categoría *
+         </label>
+         <select id="categoriaId" name="categoriaId" required="">
+          <option value="">
+           Selecciona una categoría
+          </option>
+          <option th:each="c : ${categorias}" th:selected="${producto.categoria?.id == c.id}" th:text="${c.ropa ? c.nombre + ' (requiere talla)' : c.nombre}" th:value="${c.id}">
+           Playeras
+          </option>
+         </select>
+        </div>
+        <div class="field">
+         <label for="talla">
+          Talla si corresponde a ropa
+         </label>
+         <input aria-describedby="talla-help" id="talla" maxlength="20" name="talla" th:value="${producto.talla}" type="text"/>
+         <small class="help" id="talla-help">
+          Obligatoria para ropa. Se omite en vinilos y accesorios.
+         </small>
+        </div>
+        <div class="field">
+         <label for="condicion">
+          Condición *
+         </label>
+         <select id="condicion" name="condicion" required="">
+          <option value="">
+           Selecciona la condición
+          </option>
+          <option th:each="c : ${condiciones}" th:selected="${producto.condicion == c}" th:text="${#strings.capitalize(#strings.toLowerCase(#strings.replace(c, '_', ' ')))}" th:value="${c}">
+           Como nueva
+          </option>
+         </select>
+        </div>
+        <div class="field full">
+         <label for="detalleCondicion">
+          Descripción del desgaste (obligatoria si está usada con detalles)
+         </label>
+         <textarea id="detalleCondicion" maxlength="500" name="detalleCondicion" rows="3" th:text="${producto.detalleCondicion}"></textarea>
+        </div>
+       </div>
+      </fieldset>
+      <fieldset>
+       <legend>
+        2. Precios y procedencia
+       </legend>
+       <div class="form-grid">
+        <div class="field">
+         <label for="precioOriginal">
+          Precio original en USD (opcional)
+         </label>
+         <input id="precioOriginal" min="0" name="precioOriginal" step="0.01" th:value="${producto.precioOriginal}" type="number"/>
+        </div>
+        <div class="field">
+         <label for="precioReventa">
+          Precio de reventa en USD *
+         </label>
+         <input id="precioReventa" min="0.01" name="precioReventa" required="" step="0.01" th:value="${producto.precioReventa}" type="number"/>
+        </div>
+        <!--/* La donación de origen solo se elige al dar de alta; después no cambia. */-->
+        <div class="field full" th:if="${producto.id == null}">
+         <label for="donacionId">
+          Donación de origen *
+         </label>
+         <select id="donacionId" name="donacionId" required="">
+          <option value="">
+           Selecciona la donación
+          </option>
+          <option th:each="d : ${donaciones}" th:selected="${d.id == donacionSeleccionada}" th:text="${'DON-' + d.id + ' · ' + d.donante.nombre + ' · ' + #temporals.format(d.fechaRecepcion, 'dd/MM/yyyy')}" th:value="${d.id}">
+           DON-104 · Mariana López
+          </option>
+         </select>
+        </div>
+        <div class="field full" th:if="${producto.id != null}">
+         <span class="field-label">
+          Donación de origen
+         </span>
+         <p>
+          <a th:href="@{/admin/donaciones/{id}(id=${producto.donacion.id})}" th:text="${'DON-' + producto.donacion.id + ' · ' + producto.donacion.donante.nombre}">DON-104</a>
+         </p>
+        </div>
+       </div>
+      </fieldset>
+      <fieldset>
+       <legend>
+        3. Fotografías
+       </legend>
+       <div class="upload">
+        <label for="foto">
+         <strong th:text="${producto.id == null ? 'Seleccionar imagen de la pieza' : 'Agregar otra imagen'}">
+          Seleccionar imagen de la pieza
+         </strong>
+        </label>
+        <p class="small muted">
+         Vista general o detalle de su condición. JPG o PNG, máximo 2 MB. Se guarda en Cloudinary.
+        </p>
+        <input accept="image/jpeg,image/png" id="foto" name="foto" type="file"/>
+       </div>
+       <th:block th:if="${producto.id != null and !producto.imagenes.isEmpty()}">
+        <p class="small muted">
+         Imágenes guardadas
+        </p>
+        <div class="preview-row">
+         <img th:alt="${producto.nombre}" th:each="img : ${producto.imagenes}" th:src="@{${img.url}}"/>
+        </div>
+       </th:block>
+      </fieldset>
+      <fieldset th:if="${producto.id != null}">
+       <legend>
+        4. Publicación
+       </legend>
+       <p>
+        Autenticidad:
+        <span th:replace="~{fragments/componentes :: estado(${producto.estadoVerificacion})}">Pendiente</span>
+       </p>
+       <p class="small muted">
+        Solo se pueden publicar piezas verificadas. La publicación se hace desde el listado de productos.
+       </p>
+      </fieldset>
+      <p class="small muted" th:if="${producto.id == null}">
+       La pieza nueva queda pendiente de revisión de autenticidad y se registra su entrada al inventario.
+      </p>
+      <div class="form-actions">
+       <button class="btn" type="submit">
+        Guardar pieza
+        <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+         <path d="M4 12h16m-6-6 6 6-6 6">
+         </path>
+        </svg>
+       </button>
+       <a class="btn btn-outline" th:href="@{/admin/productos}">
+        Cancelar
+       </a>
+      </div>
+     </section>
+    </form>
+   </main>
+  </div>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

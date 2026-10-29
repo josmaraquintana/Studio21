@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Confirmar pedido')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!-- La misma plantilla se completa con los datos que proporciona HomeController. -->
+  <main class="container" id="contenido">
+   <div class="page-heading">
+    <div>
+     <p class="eyebrow">
+      Studio 21
+     </p>
+     <h1>
+      Confirma tu pedido
+     </h1>
+     <p class="muted">
+      Revisa la dirección, la pieza y el método de pago.
+     </p>
+    </div>
+   </div>
+   <div class="split">
+    <div class="stack">
+     <section class="panel">
+      <h2>
+       1. Dirección de entrega
+      </h2>
+      <label class="choice">
+       <input checked="" name="direccion-visual" type="radio"/>
+       <span>
+        <strong>
+         Juan Pérez · Casa
+        </strong>
+        <small>
+         Av. Insurgentes Sur 1450, Int. 4B · Actipan
+        </small>
+        <small>
+         Ciudad de México, CP 03230 · +52 55 1234 5678
+        </small>
+       </span>
+      </label>
+      <a th:href="@{/direcciones#formulario}">
+       Agregar otra dirección
+      </a>
+     </section>
+     <section class="panel">
+      <h2>
+       2. Método de pago
+      </h2>
+      <label class="choice">
+       <input name="pago-visual" type="radio" value="0"/>
+       <span>
+        <strong>
+         Tarjeta
+        </strong>
+        <small>
+         Débito o crédito
+        </small>
+       </span>
+      </label>
+      <label class="choice">
+       <input checked="" name="pago-visual" type="radio" value="1"/>
+       <span>
+        <strong>
+         Transferencia
+        </strong>
+        <small>
+         Transferencia bancaria
+        </small>
+       </span>
+      </label>
+      <label class="choice">
+       <input name="pago-visual" type="radio" value="2"/>
+       <span>
+        <strong>
+         Efectivo
+        </strong>
+        <small>
+         Pago registrado por el equipo
+        </small>
+       </span>
+      </label>
+      <label class="choice">
+       <input name="pago-visual" type="radio" value="3"/>
+       <span>
+        <strong>
+         PayPal
+        </strong>
+        <small>
+         Cuenta PayPal
+        </small>
+       </span>
+      </label>
+     </section>
+     <section class="panel">
+      <h2>
+       3. Tu pieza
+      </h2>
+      <div th:replace="~{fragments/componentes :: pieza(${producto},${producto.status})}">
+      </div>
+     </section>
+    </div>
+    <aside class="panel summary">
+     <h2>
+      Resumen
+     </h2>
+     <dl>
+      <div>
+       <dt>
+        Subtotal
+       </dt>
+       <dd th:text="${producto.priceText + ' USD'}">
+        $28.00 USD
+       </dd>
+      </div>
+      <div class="total">
+       <dt>
+        Total
+       </dt>
+       <dd th:text="${producto.priceText + ' USD'}">
+        $28.00 USD
+       </dd>
+      </div>
+     </dl>
+     <div class="notice">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <circle cx="12" cy="12" r="10">
+       </circle>
+       <path d="M12 11v6M12 7v1">
+       </path>
+      </svg>
+      <p>
+       Al confirmar, la pieza queda apartada y el pedido pendiente de pago.
+      </p>
+     </div>
+     <a class="btn btn-block" th:href="@{/pedido(id=${nuevoPedido},confirmado=true)}">
+      <svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24">
+       <path d="m5 12 4 4L19 6">
+       </path>
+       <circle cx="12" cy="12" r="10">
+       </circle>
+      </svg>
+      Confirmar pedido
+     </a>
+    </aside>
+   </div>
+  </main>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>

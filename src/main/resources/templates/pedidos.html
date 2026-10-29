@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+ <head th:replace="~{fragments/layout :: head('Mis pedidos')}">
+ </head>
+ <body>
+  <a class="skip" href="#contenido">
+   Saltar al contenido
+  </a>
+  <header th:replace="~{fragments/layout :: cabecera}">
+  </header>
+  <!-- La misma plantilla se completa con los datos que proporciona HomeController. -->
+  <main class="container" id="contenido">
+   <div class="page-heading">
+    <div>
+     <p class="eyebrow">
+      Studio 21
+     </p>
+     <h1>
+      Mis pedidos
+     </h1>
+     <p class="muted">
+      Consulta tus compras y el recorrido de cada pieza.
+     </p>
+    </div>
+   </div>
+   <nav aria-label="Mi cuenta" class="tabs">
+    <a th:href="@{/cuenta}">
+     Mis datos
+    </a>
+    <a th:href="@{/direcciones}">
+     Direcciones
+    </a>
+    <a aria-current="page" th:href="@{/pedidos}">
+     Mis pedidos
+    </a>
+   </nav>
+   <div class="stack">
+    <article class="panel order-card" th:each="p : ${pedidos}">
+     <div class="order-head">
+      <div>
+       <h2 th:text="${'#ORD-' + p.id}">
+       </h2>
+       <span class="small muted" th:text="${p.fecha}">
+       </span>
+      </div>
+      <span class="pill" th:classappend="${p.kind}" th:text="${p.estado}">
+      </span>
+     </div>
+     <div th:replace="~{fragments/componentes :: pieza(${p.producto},${p.disponibilidad})}">
+     </div>
+     <div class="actions">
+      <a class="btn btn-outline" th:href="@{/pedido(id=${p.id})}">
+       Ver pedido
+      </a>
+     </div>
+    </article>
+   </div>
+  </main>
+  <footer th:replace="~{fragments/layout :: pie}">
+  </footer>
+ </body>
+</html>
