@@ -7,6 +7,8 @@ import com.example.Studio21.repository.DonacionRepository;
 import com.example.Studio21.repository.DonanteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Isolation;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
@@ -35,6 +37,7 @@ public class DonacionService {
     }
 
     // Si llega donanteId se usa un donante existente; si no, se registra uno nuevo con sus datos.
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public Donacion registrar(Long donanteId, String nombre, String telefono, String correo,
                               String fechaRecepcion, String observaciones, Usuario recibidoPor) {
         if (recibidoPor == null) {
@@ -64,6 +67,7 @@ public class DonacionService {
     }
 
     // Una donación solo se elimina si todavía no tiene piezas registradas.
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void eliminar(Long id) {
         Donacion donacion = donacionRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Donación no encontrada."));

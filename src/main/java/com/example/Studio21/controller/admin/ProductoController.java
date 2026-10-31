@@ -12,6 +12,7 @@ import com.example.Studio21.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import java.security.Principal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -74,11 +75,11 @@ public class ProductoController {
                           @RequestParam(name = "precioOriginal", required = false) BigDecimal precioOriginal,
                           @RequestParam(name = "precioReventa", required = false) BigDecimal precioReventa,
                           @RequestParam(name = "foto", required = false) MultipartFile foto,
-                          Model model) {
+                          Model model, Principal principal) {
         try {
-            // El responsable de la recepción se toma de la sesión, nunca del formulario.
+            // El responsable de la recepción se toma de Spring Security, nunca del formulario.
             productoService.crear(nombre, descripcion, artistaId, categoriaId, donacionId, condicion,
-                    detalleCondicion, talla, precioOriginal, precioReventa, foto, usuarioService.obtenerAdminLogueado());
+                    detalleCondicion, talla, precioOriginal, precioReventa, foto, usuarioService.obtenerAdministrador(principal.getName()));
         } catch (IllegalArgumentException | IllegalStateException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("producto", new Producto());

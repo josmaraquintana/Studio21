@@ -7,6 +7,7 @@ import com.example.Studio21.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import java.security.Principal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -74,9 +75,9 @@ public class PedidoAdminController {
                          @RequestParam(name = "paqueteria", required = false) String paqueteria,
                          @RequestParam(name = "numeroGuia", required = false) String numeroGuia,
                          @RequestParam(name = "fechaEnvio", required = false) String fechaEnvio,
-                         Model model) {
+                         Model model, Principal principal) {
         try {
-            pedidoService.registrarEnvio(id, paqueteria, numeroGuia, fechaEnvio, usuarioService.obtenerAdminLogueado());
+            pedidoService.registrarEnvio(id, paqueteria, numeroGuia, fechaEnvio, usuarioService.obtenerAdministrador(principal.getName()));
         } catch (IllegalArgumentException | IllegalStateException e) {
             model.addAttribute("error", e.getMessage());
             return mostrarDetalle(id, model);

@@ -3,7 +3,6 @@ package com.example.Studio21.service;
 import com.example.Studio21.enums.RolUsuario;
 import com.example.Studio21.model.Usuario;
 import com.example.Studio21.repository.UsuarioRepository;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 // Spring Security llama a loadUserByUsername() en el login para validar las credenciales contra la base de datos.
 @Service
@@ -19,10 +17,6 @@ public class UsuarioService implements UserDetailsService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
-
-    // Spring inyecta la sesión de la petición actual.
-    @Autowired
-    private HttpSession session;
 
     // Busca al usuario por correo; Spring Security compara la contraseña con el hash usando BCrypt.
     // Solo los administradores pueden entrar al panel.
@@ -46,16 +40,13 @@ public class UsuarioService implements UserDetailsService {
         return usuarioRepository.findByCorreo(correo).orElse(null);
     }
 
-    // Administrador que hace la acción (recibe donaciones, verifica piezas, registra movimientos).
-    public Usuario obtenerAdminLogueado() {
-        Long adminId = (Long) session.getAttribute("admin_id");
-
-        if (adminId != null) {
-            Optional<Usuario> usuarioOpt = usuarioRepository.findById(adminId);
-            if (usuarioOpt.isPresent()) {
-                return usuarioOpt.get();
-            }
+    // El correo procede del Principal autenticado que recibe el controlador.
+    public Usuario obtenerAdministrador(String correo) {
+        Usuario usuario = usuarioRepository.findByCorreo(correo)
+                .orElseThrow(() -> new IllegalStateException("Administrador no encontrado."));
+        if (usuario.getRol() != RolUsuario.ADMIN) {
+            throw new IllegalStateException("Se requiere un administrador.");
         }
-        return null;
+        return usuario;
     }
 }

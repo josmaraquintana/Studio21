@@ -5,6 +5,8 @@ import com.example.Studio21.repository.ArtistaRepository;
 import com.example.Studio21.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Isolation;
 
 import java.util.List;
 
@@ -25,6 +27,7 @@ public class ArtistaService {
         return artistaRepository.findById(id).orElse(null);
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void guardar(Artista artista) {
         validar(artista);
         artista.setNombre(artista.getNombre().trim());
@@ -33,6 +36,7 @@ public class ArtistaService {
     }
 
     // Se copian los datos del formulario sobre el registro guardado: UPDATE, no INSERT.
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void actualizar(Long id, Artista datos) {
         validar(datos);
         Artista artista = artistaRepository.findById(id)
@@ -42,6 +46,7 @@ public class ArtistaService {
         artistaRepository.save(artista);
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void eliminar(Long id) {
         if (productoRepository.existsByArtistaId(id)) {
             throw new IllegalStateException("No se puede eliminar: hay piezas registradas de este artista.");

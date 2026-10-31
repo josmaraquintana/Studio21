@@ -7,6 +7,7 @@ import com.example.Studio21.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import java.security.Principal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,9 +39,9 @@ public class AutenticidadController {
     }
 
     @PostMapping("/admin/autenticidad/verificar/{id}")
-    public String verificar(@PathVariable Long id, @RequestParam("evidencia") String evidencia, Model model) {
+    public String verificar(@PathVariable Long id, @RequestParam("evidencia") String evidencia, Model model, Principal principal) {
         try {
-            productoService.verificarAutenticidad(id, usuarioService.obtenerAdminLogueado(), evidencia);
+            productoService.verificarAutenticidad(id, usuarioService.obtenerAdministrador(principal.getName()), evidencia);
         } catch (IllegalArgumentException | IllegalStateException e) {
             model.addAttribute("error", e.getMessage());
             return mostrarVista(model, id);
@@ -49,9 +50,9 @@ public class AutenticidadController {
     }
 
     @PostMapping("/admin/autenticidad/rechazar/{id}")
-    public String rechazar(@PathVariable Long id, @RequestParam("evidencia") String evidencia, Model model) {
+    public String rechazar(@PathVariable Long id, @RequestParam("evidencia") String evidencia, Model model, Principal principal) {
         try {
-            productoService.rechazarAutenticidad(id, usuarioService.obtenerAdminLogueado(), evidencia);
+            productoService.rechazarAutenticidad(id, usuarioService.obtenerAdministrador(principal.getName()), evidencia);
         } catch (IllegalArgumentException | IllegalStateException e) {
             model.addAttribute("error", e.getMessage());
             return mostrarVista(model, id);

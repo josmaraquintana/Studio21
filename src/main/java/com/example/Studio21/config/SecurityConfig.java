@@ -37,7 +37,6 @@ public class SecurityConfig {
                     // Se guarda en sesión el administrador para mostrar su nombre y registrar quién hace cada acción.
                     Usuario admin = usuarioService.buscarPorCorreo(authentication.getName());
                     HttpSession session = request.getSession();
-                    session.setAttribute("admin_id", admin.getId());
                     session.setAttribute("admin_nombre", admin.getNombre());
                     response.sendRedirect(request.getContextPath() + "/admin");
                 })

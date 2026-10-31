@@ -20,7 +20,7 @@
        </p>
        <h1 th:text="${'#ORD-' + pedido.id}">
        </h1>
-       <p class="muted" th:text="${pedido.fecha + ' · Juan Pérez'}">
+       <p class="muted" th:text="${pedido.fecha + ' · Cliente de prueba'}">
        </p>
       </div>
       <span class="pill" th:classappend="${pedido.kind}" th:text="${pedido.estado}">
@@ -49,11 +49,11 @@
          Dirección de este pedido
         </h2>
         <p>
-         Juan Pérez · +52 55 1234 5678
+         Cliente de prueba · 000-000-0004
          <br/>
-         Av. Insurgentes Sur 1450, Int. 4B
+         Calle de Prueba 123
          <br/>
-         Actipan, Ciudad de México, CP 03230
+         Colonia Ficticia, Ciudad de Prueba, Estado de Prueba, CP 00000
         </p>
         <p class="small muted">
          Copia guardada al confirmar el pedido.

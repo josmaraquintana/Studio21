@@ -2,14 +2,14 @@ package com.example.Studio21.service;
 
 import com.example.Studio21.enums.EstadoPedido;
 import com.example.Studio21.model.DetallePedido;
-import com.example.Studio21.model.MovimientoInventario;
 import com.example.Studio21.model.Pedido;
 import com.example.Studio21.model.Usuario;
-import com.example.Studio21.repository.MovimientoInventarioRepository;
 import com.example.Studio21.repository.PedidoRepository;
 import com.example.Studio21.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Isolation;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
@@ -27,7 +27,7 @@ public class PedidoService {
     private ProductoRepository productoRepository;
 
     @Autowired
-    private MovimientoInventarioRepository movimientoRepository;
+    private InventarioService inventarioService;
 
     public List<Pedido> buscar(String texto, EstadoPedido estado) {
         String filtro = (texto == null || texto.isBlank()) ? null : texto.trim();
@@ -44,12 +44,17 @@ public class PedidoService {
     }
 
     // Pagar convierte las piezas apartadas en vendidas.
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void registrarPago(Long id) {
         Pedido pedido = obtenerPedido(id);
+        for (DetallePedido detalle : detallesOrdenados(pedido)) {
+            inventarioService.exigirExistencia(detalle.getProducto().getId());
+        }
         pedido.pagar();
         guardarConPiezas(pedido);
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void comenzarPreparacion(Long id) {
         Pedido pedido = obtenerPedido(id);
         pedido.procesar();
@@ -57,6 +62,7 @@ public class PedidoService {
     }
 
     // Al despachar se registra la salida física (-1) de cada pieza del pedido.
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void registrarEnvio(Long id, String paqueteria, String numeroGuia, String fechaEnvio, Usuario admin) {
         if (admin == null) {
             throw new IllegalStateException("No hay un administrador en sesión.");
@@ -67,13 +73,13 @@ public class PedidoService {
                 numeroGuia == null ? null : numeroGuia.trim(), fecha);
         pedidoRepository.save(pedido);
 
-        for (DetallePedido detalle : pedido.getDetalles()) {
-            movimientoRepository.save(new MovimientoInventario(detalle.getProducto(), admin, -1,
-                    "Despacho " + pedido.getNumeroPedido() + " · " + pedido.getPaqueteria() + " " + pedido.getNumeroGuia(),
-                    fecha));
+        for (DetallePedido detalle : detallesOrdenados(pedido)) {
+            inventarioService.registrarDespacho(detalle.getProducto().getId(), admin,
+                    "Despacho " + pedido.getNumeroPedido(), fecha);
         }
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void registrarEntrega(Long id, String fechaEntrega) {
         Pedido pedido = obtenerPedido(id);
         pedido.entregar(convertirFecha(fechaEntrega, "entrega"));
@@ -81,6 +87,7 @@ public class PedidoService {
     }
 
     // Cancelar un pedido pendiente libera las piezas apartadas, sin generar entradas físicas.
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void cancelar(Long id) {
         Pedido pedido = obtenerPedido(id);
         pedido.cancelar();
@@ -88,16 +95,21 @@ public class PedidoService {
     }
 
     private Pedido obtenerPedido(Long id) {
-        return pedidoRepository.findById(id)
+        return pedidoRepository.buscarParaActualizar(id)
                 .orElseThrow(() -> new IllegalArgumentException("Pedido no encontrado."));
     }
 
     // Las piezas cambian de disponibilidad junto con el pedido; se guardan ambas.
     private void guardarConPiezas(Pedido pedido) {
-        for (DetallePedido detalle : pedido.getDetalles()) {
+        for (DetallePedido detalle : detallesOrdenados(pedido)) {
             productoRepository.save(detalle.getProducto());
         }
         pedidoRepository.save(pedido);
+    }
+
+    private List<DetallePedido> detallesOrdenados(Pedido pedido) {
+        return pedido.getDetalles().stream()
+                .sorted(java.util.Comparator.comparing(detalle -> detalle.getProducto().getId())).toList();
     }
 
     // El input datetime-local envía el formato 2024-10-24T10:15.

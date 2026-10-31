@@ -6,6 +6,7 @@ import com.example.Studio21.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import java.security.Principal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,9 +40,9 @@ public class InventarioController {
     public String registrarAjuste(@RequestParam(name = "productoId", required = false) Long productoId,
                                   @RequestParam(name = "cambio", required = false) Integer cambio,
                                   @RequestParam(name = "motivo", required = false) String motivo,
-                                  Model model) {
+                                  Model model, Principal principal) {
         try {
-            inventarioService.registrarAjuste(productoId, cambio, motivo, usuarioService.obtenerAdminLogueado());
+            inventarioService.registrarAjuste(productoId, cambio, motivo, usuarioService.obtenerAdministrador(principal.getName()));
         } catch (IllegalArgumentException | IllegalStateException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("formularioAbierto", true);

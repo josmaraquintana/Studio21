@@ -22,7 +22,7 @@
        #ORD-8492
       </h1>
       <p class="muted" th:text="${(pedido.fechaCompra != null ? #temporals.format(pedido.fechaCompra, 'dd/MM/yyyy HH:mm') + ' · ' : '') + pedido.usuario.nombre + ' · ' + pedido.usuario.correo}">
-       24/10/2024 · Juan Pérez
+       25/10/2026 · Cliente de prueba
       </p>
      </div>
      <span th:replace="~{fragments/componentes :: estado(${pedido.estado})}">Pendiente</span>
@@ -71,11 +71,11 @@
         Dirección de este pedido
        </h2>
        <p th:with="dir=${pedido.direccionEnvio}">
-        <span th:text="${dir.destinatario + ' · ' + dir.telefono}">Juan Pérez · +52 55 1234 5678</span>
+        <span th:text="${dir.destinatario + ' · ' + dir.telefono}">Cliente de prueba · 000-000-0004</span>
         <br/>
-        <span th:text="${dir.calle + ' ' + dir.numeroExterior}">Av. Insurgentes Sur 1450</span>
+        <span th:text="${dir.calle + ' ' + dir.numeroExterior}">Calle de Prueba 123</span>
         <br/>
-        <span th:text="${dir.colonia + ', ' + dir.ciudad + ', ' + dir.estado + ', CP ' + dir.codigoPostal}">Actipan, Ciudad de México, CP 03230</span>
+        <span th:text="${dir.colonia + ', ' + dir.ciudad + ', ' + dir.estado + ', CP ' + dir.codigoPostal}">Colonia Ficticia, Ciudad de Prueba, Estado de Prueba, CP 00000</span>
        </p>
        <p class="small muted">
         Copia guardada al confirmar el pedido.
@@ -90,7 +90,7 @@
        </p>
        <p>
         Fecha de envío:
-        <span th:text="${#temporals.format(pedido.fechaEnvio, 'dd/MM/yyyy HH:mm')}">20/10/2024</span>
+        <span th:text="${#temporals.format(pedido.fechaEnvio, 'dd/MM/yyyy HH:mm')}">26/10/2026</span>
        </p>
        <p>
         Fecha de entrega:

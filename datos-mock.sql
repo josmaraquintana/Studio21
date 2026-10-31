@@ -1,28 +1,26 @@
 -- =====================================================================
 -- Studio 21 · Datos mock para el panel de administración (Avance 3)
---
--- Cómo usarlo:
---   1. Ejecuta la aplicación una vez para que JPA (ddl-auto=update) cree las tablas en studio21db.
---   2. Detén la aplicación y ejecuta este script en MySQL Workbench (o en la consola de MySQL).
---   3. Vuelve a iniciar la aplicación y entra a http://localhost:8080/admin
---
--- Accesos (las contraseñas se guardan cifradas con BCrypt, nunca en texto plano):
---   Administrador:  sofia.rivas@studio21.com    / admin123
---   Administrador:  carlos.mendoza@studio21.com / admin123
---   Cliente:        juan.perez@correo.com       / cliente123   (no puede entrar al panel)
+
+--   1. Crea el esquema con JPA en la base local de demostración elegida.
+--   2. Detén la aplicación y revisa USE antes de ejecutar este archivo manualmente.
+--   3. Reinicia la aplicación y abre http://localhost:8080/admin.
 -- =====================================================================
 
 USE studio21db;
 
--- Usuarios
+-- Usuarios: los tres integrantes son ADMIN; el comprador es una cuenta separada.
+-- Los correos identifican cuentas de demostración, no direcciones personales reales.
+-- Las contraseñas se almacenan únicamente como hashes BCrypt.
 INSERT INTO usuario (id, nombre, correo, contrasenia_hash, telefono, rol) VALUES
-(1, 'Sofía Rivas',    'sofia.rivas@studio21.com',    '$2a$10$bwCEY3DwYlQsalt2kA5XUOZMnaOg5MJ8s/ltVvM.OLUSIov02R77y', '+52 55 1000 2100', 'ADMIN'),
-(2, 'Carlos Mendoza', 'carlos.mendoza@studio21.com', '$2a$10$bwCEY3DwYlQsalt2kA5XUOZMnaOg5MJ8s/ltVvM.OLUSIov02R77y', '+52 55 1000 2101', 'ADMIN'),
-(3, 'Juan Pérez',     'juan.perez@correo.com',       '$2a$10$Ep34T86if3V4l1WlhKAr2.9o2QaVqmi0Js9Ar45jP5HoUcX9N6AC.', '+52 55 1234 5678', 'CLIENTE');
+(1, 'Ori', 'ori@studio21.com', '$2a$10$bwCEY3DwYlQsalt2kA5XUOZMnaOg5MJ8s/ltVvM.OLUSIov02R77y', '000-000-0001', 'ADMIN'),
+(2, 'Jos', 'jos@studio21.com', '$2a$10$bwCEY3DwYlQsalt2kA5XUOZMnaOg5MJ8s/ltVvM.OLUSIov02R77y', '000-000-0002', 'ADMIN'),
+(3, 'Piña', 'pina@studio21.com', '$2a$10$bwCEY3DwYlQsalt2kA5XUOZMnaOg5MJ8s/ltVvM.OLUSIov02R77y', '000-000-0003', 'ADMIN'),
+(4, 'Cliente de prueba', 'cliente@example.com', '$2a$10$Ep34T86if3V4l1WlhKAr2.9o2QaVqmi0Js9Ar45jP5HoUcX9N6AC.', '000-000-0004', 'CLIENTE');
 
--- Dirección guardada del cliente
+-- Direcciones ficticias del cliente (ID 4), nunca de Piña (ID 3).
 INSERT INTO direccion (id, usuario_id, destinatario, telefono, calle, numero_exterior, colonia, ciudad, estado_direccion, codigo_postal) VALUES
-(1, 3, 'Juan Pérez', '+52 55 1234 5678', 'Av. Insurgentes Sur', '1450', 'Actipan', 'Ciudad de México', 'CDMX', '03230');
+(1, 4, 'Cliente de prueba', '000-000-0004', 'Calle de Prueba', '123', 'Colonia Ficticia', 'Ciudad de Prueba', 'Estado de Prueba', '00000'),
+(2, 4, 'Cliente de prueba', '000-000-0004', 'Avenida de Prueba', '456', 'Colonia Simulada', 'Ciudad de Prueba', 'Estado de Prueba', '00000');
 
 -- Categorías
 INSERT INTO categoria (id, nombre, descripcion, ropa) VALUES
@@ -41,12 +39,12 @@ INSERT INTO artista (id, nombre, genero_musical) VALUES
 
 -- Donantes y donaciones
 INSERT INTO donante (id, nombre, telefono, correo) VALUES
-(1, 'Mariana López',  '+52 55 4192 8810', 'mariana.lopez@ejemplo.com'),
-(2, 'Andrea Beltrán', '+52 55 3301 7720', NULL);
+(1, 'Donante de prueba 1', '000-000-0011', 'donante1@example.com'),
+(2, 'Donante de prueba 2', '000-000-0012', 'donante2@example.com');
 
 INSERT INTO donacion (id, donante_id, fecha_recepcion, recibido_por_id, observaciones) VALUES
 (1, 1, '2026-10-18 10:15:00', 2, 'Dos prendas entregadas en mano. Donación voluntaria sin compensación económica.'),
-(2, 2, '2026-10-24 12:30:00', 1, NULL);
+(2, 2, '2026-10-24 12:30:00', 3, 'Pieza recibida por Piña para revisión de autenticidad.');
 
 -- Piezas (las fotos de ejemplo usan las imágenes que ya existen en static/img;
 -- las que subas desde el panel se guardan en Cloudinary)
@@ -58,7 +56,7 @@ INSERT INTO producto (id, version, nombre, descripcion, precio_original, precio_
  'VERIFICADA', 'DISPONIBLE', 1, 2, 1, 1, 1, '2026-10-19 09:00:00', 'Etiqueta oficial de la gira y estampado original.', NULL),
 (2, 0, 'Playera Tour The Eras', 'Playera negra de la gira The Eras. Estampado frontal con fotografías de los álbumes.', 55.00, 28.00, 'USADA_CON_DETALLES',
  'Ligero desgaste en el estampado por lavado. Tela y costuras sin roturas.', 'M',
- 'VERIFICADA', 'APARTADA', 1, 1, 1, 1, 1, '2026-10-19 09:20:00', 'Etiqueta y costuras de merch oficial.', NULL),
+ 'VERIFICADA', 'APARTADA', 1, 1, 1, 1, 3, '2026-10-19 09:20:00', 'Etiqueta y costuras de merch oficial.', NULL),
 (3, 0, 'Playera de gira', 'Playera negra recibida por donación, pendiente de revisión.', 40.00, 25.00, 'USADA_CON_DETALLES',
  'Desgaste leve en estampado.', 'M',
  'PENDIENTE', 'DISPONIBLE', 0, 5, 1, 2, NULL, NULL, NULL, NULL);
@@ -72,15 +70,15 @@ INSERT INTO imagen_producto (id, url, producto_id) VALUES
 INSERT INTO movimiento_inventario (id, fecha, cambio_cantidad, motivo, producto_id, registrado_por_id) VALUES
 (1, '2026-10-18 10:20:00', 1, 'Recepción DON-1', 1, 2),
 (2, '2026-10-18 10:21:00', 1, 'Recepción DON-1', 2, 2),
-(3, '2026-10-24 12:35:00', 1, 'Recepción DON-2', 3, 1);
+(3, '2026-10-24 12:35:00', 1, 'Recepción DON-2', 3, 3);
 
 -- Pedido confirmado y pendiente de pago (la pieza 2 queda apartada)
 INSERT INTO pedido (id, version, numero_pedido, fecha_compra, total, estado, metodo_pago,
                     destinatario, telefono, calle, numero_exterior, colonia, ciudad, estado_direccion, codigo_postal,
                     fecha_envio, fecha_entrega, paqueteria, numero_guia, confirmado, usuario_id) VALUES
 (1, 0, 'ORD-8492', '2026-10-25 18:40:00', 28.00, 'PENDIENTE', 'TRANSFERENCIA',
- 'Juan Pérez', '+52 55 1234 5678', 'Av. Insurgentes Sur', '1450', 'Actipan', 'Ciudad de México', 'CDMX', '03230',
- NULL, NULL, NULL, NULL, 1, 3);
+ 'Cliente de prueba', '000-000-0004', 'Calle de Prueba', '123', 'Colonia Ficticia', 'Ciudad de Prueba', 'Estado de Prueba', '00000',
+ NULL, NULL, NULL, NULL, 1, 4);
 
 INSERT INTO detalle_pedido (id, pedido_id, producto_id, cantidad, precio_unitario_compra) VALUES
 (1, 1, 2, 1, 28.00);
