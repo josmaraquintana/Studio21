@@ -86,3 +86,51 @@ INSERT INTO detalle_pedido (id, pedido_id, producto_id, cantidad, precio_unitari
 (1, 1, 2, 1, 28.00);
 
 UPDATE producto SET pedido_reserva_id = 1 WHERE id = 2;
+
+-- Persona 2 · Catálogo público: SOLO el bloque nuevo.
+-- Ejecútalo en MySQL Workbench DESPUÉS de haber corrido el datos-mock.sql original.
+-- No lo ejecutes dos veces (los ids se repetirían).
+
+USE studio21db;
+-- =====================================================================
+-- Catálogo público (API). Piezas extra para probar filtros y estados.
+-- 4-7: verificadas y publicadas · 8: vendida (sigue visible como "Vendida")
+-- 9: rechazada y 10: retirada (NO deben aparecer en /api/productos)
+-- =====================================================================
+INSERT INTO producto (id, version, nombre, descripcion, precio_original, precio_reventa, condicion, detalle_condicion, talla,
+                      estado_verificacion, estado_disponibilidad, activo, artista_id, categoria_id, donacion_id,
+                      verificado_por_id, fecha_verificacion, evidencia_verificacion, pedido_reserva_id) VALUES
+(4, 0, 'Sudadera Brat', 'Sudadera verde lima con el logotipo del álbum Brat.', 70.00, 42.00, 'NUEVA', NULL, 'L',
+ 'VERIFICADA', 'DISPONIBLE', 1, 3, 2, 2, 1, '2026-10-26 10:00:00', 'Etiqueta oficial de la tienda del artista.', NULL),
+(5, 0, 'Vinilo Random Access Memories', 'Edición doble en vinilo. Carátula en buen estado.', 45.00, 38.00, 'COMO_NUEVA',
+ 'Carátula con una marca mínima en una esquina.', NULL,
+ 'VERIFICADA', 'DISPONIBLE', 1, 4, 3, 2, 2, '2026-10-26 10:30:00', 'Sello y numeración de la edición oficial.', NULL),
+(6, 0, 'Póster The Strokes', 'Póster de gira, impresión original.', 25.00, 18.00, 'COMO_NUEVA', NULL, NULL,
+ 'VERIFICADA', 'DISPONIBLE', 1, 5, 4, 2, 1, '2026-10-26 11:00:00', 'Impresión oficial con sello de la gira.', NULL),
+(7, 0, 'Cárdigan Folklore', 'Cárdigan gris de la colección Folklore.', 90.00, 55.00, 'USADA_CON_DETALLES',
+ 'Bolitas de tela leves en los codos.', 'S',
+ 'VERIFICADA', 'DISPONIBLE', 1, 1, 2, 2, 1, '2026-10-26 11:30:00', 'Etiqueta oficial y costura original.', NULL),
+(8, 0, 'Playera Eras (vendida)', 'Playera blanca de The Eras Tour, ya vendida.', 50.00, 30.00, 'COMO_NUEVA', NULL, 'S',
+ 'VERIFICADA', 'VENDIDA', 0, 1, 1, 2, 1, '2026-10-20 10:00:00', 'Etiqueta oficial.', NULL),
+(9, 0, 'Playera sospechosa', 'Pieza rechazada por autenticidad.', 40.00, 20.00, 'USADA_CON_DETALLES', 'Estampado dudoso.', 'M',
+ 'RECHAZADA', 'DISPONIBLE', 0, 2, 1, 2, 1, '2026-10-26 12:00:00', 'No coincide con el merch oficial.', NULL),
+(10, 0, 'Vinilo retirado', 'Pieza verificada pero retirada de la venta.', 40.00, 30.00, 'NUEVA', NULL, NULL,
+ 'VERIFICADA', 'DISPONIBLE', 0, 4, 3, 2, 1, '2026-10-26 12:30:00', 'Sello oficial.', NULL);
+
+INSERT INTO imagen_producto (id, url, producto_id) VALUES
+(4, '/img/sudadera-brat.jpg',      4),
+(5, '/img/vinilo-daft-punk.jpg',   5),
+(6, '/img/poster-strokes.jpg',     6),
+(7, '/img/cardigan.jpg',           7),
+(8, '/img/playera-eras.jpg',       8),
+(9, '/img/playera-revision.jpg',   9),
+(10, '/img/vinilo-daft-punk.jpg', 10);
+
+INSERT INTO movimiento_inventario (id, fecha, cambio_cantidad, motivo, producto_id, registrado_por_id) VALUES
+(4, '2026-10-25 10:00:00', 1, 'Recepción DON-1', 4, 2),
+(5, '2026-10-25 10:01:00', 1, 'Recepción DON-1', 5, 2),
+(6, '2026-10-25 10:02:00', 1, 'Recepción DON-1', 6, 2),
+(7, '2026-10-25 10:03:00', 1, 'Recepción DON-1', 7, 2),
+(8, '2026-10-20 10:00:00', 1, 'Recepción DON-1', 8, 2),
+(9, '2026-10-25 10:04:00', 1, 'Recepción DON-1', 9, 2),
+(10, '2026-10-25 10:05:00', 1, 'Recepción DON-1', 10, 2);
