@@ -83,10 +83,10 @@
         </tr>
         <tr th:each="m : ${movimientos}">
          <td th:text="${#temporals.format(m.fecha, 'dd/MM/yyyy HH:mm')}">
-          20/10/2024
+          18/10/2026 10:20
          </td>
          <td th:text="${'S21-' + #numbers.formatInteger(m.producto.id, 3) + ' · ' + m.producto.nombre}">
-          S21-005 · Sudadera Brat
+          S21-001 · Playera Motomami
          </td>
          <td>
           <span class="pill" th:classappend="${m.cambioCantidad > 0 ? 'verified' : 'sold'}" th:text="${m.cambioCantidad > 0 ? '+1 · Entrada' : '−1 · Salida'}">
@@ -94,10 +94,10 @@
           </span>
          </td>
          <td th:text="${m.motivo}">
-          Recepción DON-104
+          Recepción DON-1
          </td>
          <td th:text="${m.registradoPor.nombre}">
-          Sofía Rivas
+          Jos
          </td>
         </tr>
        </tbody>

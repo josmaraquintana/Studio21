@@ -147,7 +147,7 @@
            Selecciona la donación
           </option>
           <option th:each="d : ${donaciones}" th:selected="${d.id == donacionSeleccionada}" th:text="${'DON-' + d.id + ' · ' + d.donante.nombre + ' · ' + #temporals.format(d.fechaRecepcion, 'dd/MM/yyyy')}" th:value="${d.id}">
-           DON-104 · Mariana López
+           DON-1 · Donante de prueba 1
           </option>
          </select>
         </div>
@@ -156,7 +156,7 @@
           Donación de origen
          </span>
          <p>
-          <a th:href="@{/admin/donaciones/{id}(id=${producto.donacion.id})}" th:text="${'DON-' + producto.donacion.id + ' · ' + producto.donacion.donante.nombre}">DON-104</a>
+          <a th:href="@{/admin/donaciones/{id}(id=${producto.donacion.id})}" th:text="${'DON-' + producto.donacion.id + ' · ' + producto.donacion.donante.nombre}">DON-1</a>
          </p>
         </div>
        </div>

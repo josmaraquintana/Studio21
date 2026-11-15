@@ -6,6 +6,7 @@ import com.example.Studio21.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import java.security.Principal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,12 +41,12 @@ public class DonacionController {
                             @RequestParam(name = "donanteCorreo", required = false) String donanteCorreo,
                             @RequestParam(name = "fechaRecepcion", required = false) String fechaRecepcion,
                             @RequestParam(name = "observaciones", required = false) String observaciones,
-                            Model model) {
+                            Model model, Principal principal) {
         Donacion donacion;
         try {
             // Quien recibe la donación es el administrador en sesión.
             donacion = donacionService.registrar(donanteId, donanteNombre, donanteTelefono, donanteCorreo,
-                    fechaRecepcion, observaciones, usuarioService.obtenerAdminLogueado());
+                    fechaRecepcion, observaciones, usuarioService.obtenerAdministrador(principal.getName()));
         } catch (IllegalArgumentException | IllegalStateException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("formularioAbierto", true);

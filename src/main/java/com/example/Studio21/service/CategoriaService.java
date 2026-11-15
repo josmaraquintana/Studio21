@@ -5,6 +5,8 @@ import com.example.Studio21.repository.CategoriaRepository;
 import com.example.Studio21.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Isolation;
 
 import java.util.List;
 
@@ -25,6 +27,7 @@ public class CategoriaService {
         return categoriaRepository.findById(id).orElse(null);
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void guardar(Categoria categoria) {
         validar(categoria);
         categoria.setNombre(categoria.getNombre().trim());
@@ -32,6 +35,7 @@ public class CategoriaService {
     }
 
     // Se copian los datos del formulario sobre el registro guardado: UPDATE, no INSERT.
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void actualizar(Long id, Categoria datos) {
         validar(datos);
         Categoria categoria = categoriaRepository.findById(id)
@@ -42,6 +46,7 @@ public class CategoriaService {
         categoriaRepository.save(categoria);
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void eliminar(Long id) {
         if (productoRepository.existsByCategoriaId(id)) {
             throw new IllegalStateException("No se puede eliminar: hay piezas registradas en esta categoría.");

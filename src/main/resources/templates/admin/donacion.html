@@ -22,10 +22,10 @@
        Studio 21
       </p>
       <h1 th:text="${'Donación #DON-' + donacion.id}">
-       Donación #DON-104
+       Donación #DON-1
       </h1>
       <p class="muted" th:text="${'Recibida el ' + #temporals.format(donacion.fechaRecepcion, 'dd/MM/yyyy HH:mm')}">
-       Recibida el 18/10/2024.
+       Recibida el 18/10/2026.
       </p>
      </div>
      <div class="actions">
@@ -48,13 +48,13 @@
       </h2>
       <p>
        <strong th:text="${donacion.donante.nombre}">
-        Mariana López
+        Donante de prueba 1
        </strong>
        <br/>
-       <span th:text="${donacion.donante.telefono}">+52 55 4192 8810</span>
+       <span th:text="${donacion.donante.telefono}">000-000-0011</span>
        <th:block th:if="${donacion.donante.correo != null}">
         <br/>
-        <span th:text="${donacion.donante.correo}">correo@ejemplo.com</span>
+        <span th:text="${donacion.donante.correo}">donante1@example.com</span>
        </th:block>
       </p>
       <p class="small muted">
@@ -67,10 +67,10 @@
       </h2>
       <p>
        <strong th:text="${donacion.recibidoPor.nombre}">
-        Carlos Mendoza
+        Jos
        </strong>
        <br/>
-       <span th:text="${#temporals.format(donacion.fechaRecepcion, 'dd/MM/yyyy HH:mm')}">18/10/2024 10:15</span>
+       <span th:text="${#temporals.format(donacion.fechaRecepcion, 'dd/MM/yyyy HH:mm')}">18/10/2026 10:15</span>
       </p>
       <p th:text="${donacion.observaciones != null ? donacion.observaciones : 'Sin observaciones.'}">
        Sin observaciones.
