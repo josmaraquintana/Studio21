@@ -8,7 +8,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
-/** Rutas de la tienda (maquetado con datos de ejemplo). El panel /admin/** vive en los controladores de controller.admin. */
+/**
+ * Rutas del maquetado: seleccionan vistas y datos de ejemplo,
+ * sin operaciones de persistencia.
+ * */
 @Controller
 public class HomeController {
     private final DatosMaquetado datos;
@@ -63,12 +66,60 @@ public class HomeController {
     @GetMapping("/pedidos")
     public String pedidos(Model model) { model.addAttribute("seccion", "pedidos"); return "pedidos"; }
 
-    @GetMapping("/pedido")
+    @GetMapping({"/pedido", "/admin/pedido"})
     public String pedido(@RequestParam(defaultValue = "8492") String id,
-            @RequestParam(defaultValue = "") String estado,
-            @RequestParam(defaultValue = "false") boolean confirmado, Model model) {
-        model.addAttribute("pedido", datos.pedido(id, estado));
+                         @RequestParam(defaultValue = "") String estado,
+                         @RequestParam(defaultValue = "false") boolean confirmado,
+                         @RequestParam(defaultValue = "") String paqueteria,
+                         @RequestParam(defaultValue = "") String guia,
+                         @RequestParam(defaultValue = "") String fechaEnvio,
+                         @RequestParam(defaultValue = "") String fechaEntrega,
+                         jakarta.servlet.http.HttpServletRequest request, Model model) {
+        Map<String, Object> p = datos.pedido(id, estado);
+        boolean admin = request.getServletPath().startsWith("/admin/");
+        if (admin && !paqueteria.isBlank() && !guia.isBlank()) p.put("envio", paqueteria + " · Guía " + guia);
+        if (admin && !fechaEnvio.isBlank()) p.put("fechaEnvio", fechaEnvio);
+        if (admin && !fechaEntrega.isBlank()) p.put("fechaEntrega", fechaEntrega);
+        model.addAttribute("pedido", p); model.addAttribute("admin", admin);
         model.addAttribute("seccion", "pedidos"); model.addAttribute("confirmado", confirmado);
         return "pedido";
     }
+
+    private String vistaAdmin(String vista, String seccion, Model model) {
+        model.addAttribute("admin", true); model.addAttribute("seccion", seccion); return "admin/" + vista;
+    }
+
+    @GetMapping("/admin")
+    public String admin(Model model) { return vistaAdmin("inicio", "resumen", model); }
+
+    @GetMapping("/admin/productos")
+    public String productos(@RequestParam(defaultValue = "") String id,
+                            @RequestParam(defaultValue = "false") boolean crear, Model model) {
+        model.addAttribute("producto", datos.producto(id.isBlank() ? "eras" : id));
+        model.addAttribute("crear", crear); model.addAttribute("editar", !id.isBlank());
+        return vistaAdmin("productos", "productos", model);
+    }
+
+    @GetMapping("/admin/autenticidad")
+    public String autenticidad(@RequestParam(defaultValue = "Pendiente") String estado, Model model) {
+        model.addAttribute("verificacion", estado);
+        return vistaAdmin("autenticidad", "autenticidad", model);
+    }
+
+    @GetMapping("/admin/donaciones")
+    public String donaciones(@RequestParam(defaultValue = "false") boolean detalle, Model model) {
+        model.addAttribute("detalle", detalle); return vistaAdmin("donaciones", "donaciones", model);
+    }
+
+    @GetMapping("/admin/inventario")
+    public String inventario(Model model) { return vistaAdmin("inventario", "inventario", model); }
+
+    @GetMapping("/admin/pedidos")
+    public String pedidosAdmin(Model model) { return vistaAdmin("pedidos", "pedidos", model); }
+
+    @GetMapping("/admin/categorias")
+    public String categorias(Model model) { return vistaAdmin("categorias", "categorias", model); }
+
+    @GetMapping("/admin/artistas")
+    public String artistas(Model model) { return vistaAdmin("artistas", "artistas", model); }
 }
