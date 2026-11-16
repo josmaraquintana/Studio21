@@ -19,6 +19,17 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     @Query("select p from Pedido p where p.id = :id")
     Optional<Pedido> buscarParaActualizar(@Param("id") Long id);
 
+    List<Pedido> findByUsuarioIdOrderByIdDesc(Long usuarioId);
+
+    Optional<Pedido> findByIdAndUsuarioId(Long id, Long usuarioId);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select p from Pedido p where p.id = :id and p.usuario.id = :usuarioId")
+    Optional<Pedido> buscarParaActualizarDelUsuario(@Param("id") Long id, @Param("usuarioId") Long usuarioId);
+
+    @Query("select d.producto.id from DetallePedido d where d.pedido.id = :id order by d.producto.id")
+    List<Long> productoIds(@Param("id") Long id);
+
     // Busca por número de pedido o nombre del cliente y filtra por estado; ambos filtros son opcionales.
     @Query("SELECT p FROM Pedido p WHERE " +
            "(:texto IS NULL OR LOWER(p.numeroPedido) LIKE LOWER(CONCAT('%', :texto, '%')) " +
