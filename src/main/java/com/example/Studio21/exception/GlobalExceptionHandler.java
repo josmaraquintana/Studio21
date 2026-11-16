@@ -1,6 +1,10 @@
 package com.example.Studio21.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
+import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.dao.PessimisticLockingFailureException;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.crossstore.ChangeSetPersister;
@@ -30,14 +34,36 @@ import java.util.Map;
 public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    @ExceptionHandler(ChangeSetPersister.NotFoundException.class)
-    public ResponseEntity<ErrorResponse> noEncontrado(ChangeSetPersister.NotFoundException ex, HttpServletRequest req) {
+    @ExceptionHandler({NotFoundException.class, ChangeSetPersister.NotFoundException.class})
+    public ResponseEntity<ErrorResponse> noEncontrado(Exception ex, HttpServletRequest req) {
         return responder(HttpStatus.NOT_FOUND, ex.getMessage(), req);
     }
 
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ErrorResponse> conflicto(ConflictException ex, HttpServletRequest req) {
         return responder(HttpStatus.CONFLICT, ex.getMessage(), req);
+    }
+
+    @ExceptionHandler({OptimisticLockingFailureException.class,
+            PessimisticLockingFailureException.class})
+    public ResponseEntity<ErrorResponse> conflictoConcurrente(Exception ex, HttpServletRequest req) {
+        return responder(HttpStatus.CONFLICT, "El recurso cambió durante la operación; vuelve a intentarlo", req);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponse> estadoIncompatible(IllegalStateException ex, HttpServletRequest req) {
+        return responder(HttpStatus.CONFLICT, ex.getMessage(), req);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> argumentoInvalido(IllegalArgumentException ex, HttpServletRequest req) {
+        return responder(HttpStatus.BAD_REQUEST, ex.getMessage(), req);
+    }
+
+    @ExceptionHandler({HandlerMethodValidationException.class,
+            ConstraintViolationException.class})
+    public ResponseEntity<ErrorResponse> parametroInvalido(Exception ex, HttpServletRequest req) {
+        return responder(HttpStatus.BAD_REQUEST, "Hay parámetros inválidos", req);
     }
 
     /** Fallo @Valid: se devuelve qué campo falló y por qué. */
