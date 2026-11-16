@@ -62,7 +62,7 @@
          Donación
         </dt>
         <dd>
-         <a th:href="@{/admin/donaciones/{id}(id=${pieza.donacion.id})}" th:text="${'DON-' + pieza.donacion.id}">DON-107</a>
+         <a th:href="@{/admin/donaciones/{id}(id=${pieza.donacion.id})}" th:text="${'DON-' + pieza.donacion.id}">DON-2</a>
         </dd>
        </div>
        <div>
@@ -70,7 +70,7 @@
          Donante
         </dt>
         <dd th:text="${pieza.donacion.donante.nombre}">
-         Andrea Beltrán
+         Donante de prueba 2
         </dd>
        </div>
        <div>
@@ -78,7 +78,7 @@
          Recepción
         </dt>
         <dd th:text="${#temporals.format(pieza.donacion.fechaRecepcion, 'dd/MM/yyyy')}">
-         24/10/2024
+         24/10/2026
         </dd>
        </div>
       </dl>
@@ -89,7 +89,7 @@
        <hr/>
        <p class="small muted">
         Última revisión:
-        <span th:text="${pieza.verificadoPor.nombre + ', ' + #temporals.format(pieza.fechaVerificacion, 'dd/MM/yyyy HH:mm')}">Sofía Rivas</span>
+        <span th:text="${pieza.verificadoPor.nombre + ', ' + #temporals.format(pieza.fechaVerificacion, 'dd/MM/yyyy HH:mm')}">Piña</span>
        </p>
        <p class="small" th:text="${pieza.evidenciaVerificacion}">Evidencia</p>
       </th:block>
@@ -174,7 +174,7 @@
           The Strokes
          </td>
          <td th:text="${'DON-' + p.donacion.id}">
-          DON-107
+          DON-2
          </td>
          <td>
           <a class="table-link" th:href="@{/admin/autenticidad(id=${p.id})}">

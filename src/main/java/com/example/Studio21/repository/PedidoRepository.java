@@ -8,9 +8,16 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
+import jakarta.persistence.LockModeType;
+import org.springframework.data.jpa.repository.Lock;
 
 @Repository
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select p from Pedido p where p.id = :id")
+    Optional<Pedido> buscarParaActualizar(@Param("id") Long id);
 
     // Busca por número de pedido o nombre del cliente y filtra por estado; ambos filtros son opcionales.
     @Query("SELECT p FROM Pedido p WHERE " +

@@ -86,19 +86,19 @@
         </tr>
         <tr th:each="d : ${donaciones}">
          <td th:text="${'DON-' + d.id}">
-          DON-104
+          DON-1
          </td>
          <td th:text="${d.donante.nombre}">
-          Mariana López
+          Donante de prueba 1
          </td>
          <td th:text="${#temporals.format(d.fechaRecepcion, 'dd/MM/yyyy')}">
-          18/10/2024
+          18/10/2026
          </td>
          <td th:text="${#lists.size(d.productos)}">
           2
          </td>
          <td th:text="${d.recibidoPor.nombre}">
-          Carlos Mendoza
+          Jos
          </td>
          <td>
           <div class="table-actions">
@@ -149,7 +149,7 @@
            Es una persona nueva
           </option>
           <option th:each="dn : ${donantes}" th:text="${dn.nombre + ' · ' + dn.telefono}" th:value="${dn.id}">
-           Mariana López
+           Donante de prueba 1
           </option>
          </select>
         </div>

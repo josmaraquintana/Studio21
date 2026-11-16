@@ -9,7 +9,6 @@ import com.example.Studio21.model.Artista;
 import com.example.Studio21.model.Categoria;
 import com.example.Studio21.model.Donacion;
 import com.example.Studio21.model.ImagenProducto;
-import com.example.Studio21.model.MovimientoInventario;
 import com.example.Studio21.model.Producto;
 import com.example.Studio21.model.Usuario;
 import com.example.Studio21.repository.ArtistaRepository;
@@ -21,6 +20,8 @@ import com.example.Studio21.repository.PedidoRepository;
 import com.example.Studio21.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -28,7 +29,6 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -51,6 +51,9 @@ public class ProductoService {
 
     @Autowired
     private MovimientoInventarioRepository movimientoRepository;
+
+    @Autowired
+    private InventarioService inventarioService;
 
     @Autowired
     private PedidoRepository pedidoRepository;
@@ -96,6 +99,7 @@ public class ProductoService {
     }
 
     // Alta de una pieza: queda pendiente de revisión y se registra su entrada física (+1) al inventario.
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public Producto crear(String nombre, String descripcion, Long artistaId, Long categoriaId, Long donacionId,
                           CondicionProducto condicion, String detalleCondicion, String talla,
                           BigDecimal precioOriginal, BigDecimal precioReventa,
@@ -113,7 +117,7 @@ public class ProductoService {
 
         validarDatos(nombre, descripcion, categoria, condicion, detalleCondicion, talla, precioOriginal, precioReventa);
 
-        // La foto se sube antes de crear la pieza para no dejar nada a medias si falla.
+        // La transacción revierte la BD; una subida a Cloudinary requiere limpieza externa si luego falla la BD.
         String urlFoto = null;
         if (foto != null && !foto.isEmpty()) {
             urlFoto = guardarImagen(foto);
@@ -128,16 +132,16 @@ public class ProductoService {
 
         producto = productoRepository.save(producto);
 
-        movimientoRepository.save(new MovimientoInventario(producto, admin, 1,
-                "Recepción DON-" + donacion.getId(), LocalDateTime.now()));
+        inventarioService.registrarRecepcion(producto.getId(), admin, "Recepción DON-" + donacion.getId());
         return producto;
     }
 
     // Edición: solo se permite con la pieza disponible y sin publicar.
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void actualizar(Long id, String nombre, String descripcion, Long artistaId, Long categoriaId,
                            CondicionProducto condicion, String detalleCondicion, String talla,
                            BigDecimal precioOriginal, BigDecimal precioReventa, MultipartFile foto) {
-        Producto producto = productoRepository.findById(id)
+        Producto producto = productoRepository.buscarParaActualizar(id)
                 .orElseThrow(() -> new IllegalArgumentException("Pieza no encontrada."));
 
         // Se revisa antes de cambiar cualquier dato para no dejar la pieza a medias.
@@ -176,7 +180,9 @@ public class ProductoService {
     }
 
     // Una pieza que ya forma parte de un pedido o de un carrito no se elimina, para no perder el historial.
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void eliminar(Long id) {
+        obtenerProducto(id); // También serializa el borrado frente a movimientos y publicación.
         if (pedidoRepository.existsByDetallesProductoId(id)) {
             throw new IllegalStateException("No se puede eliminar: la pieza forma parte de un pedido.");
         }
@@ -188,12 +194,15 @@ public class ProductoService {
         productoRepository.deleteById(id);
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void publicar(Long id) {
         Producto producto = obtenerProducto(id);
+        inventarioService.exigirExistencia(producto.getId());
         producto.publicar(); // la entidad exige que esté verificada y disponible
         productoRepository.save(producto);
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void retirarPublicacion(Long id) {
         Producto producto = obtenerProducto(id);
         producto.retirarPublicacion();
@@ -201,6 +210,7 @@ public class ProductoService {
     }
 
     // Verificar habilita la publicación, pero no publica automáticamente.
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void verificarAutenticidad(Long id, Usuario admin, String evidencia) {
         Producto producto = obtenerProducto(id);
         if (admin == null) {
@@ -210,6 +220,7 @@ public class ProductoService {
         productoRepository.save(producto);
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void rechazarAutenticidad(Long id, Usuario admin, String motivo) {
         Producto producto = obtenerProducto(id);
         if (admin == null) {
@@ -220,7 +231,7 @@ public class ProductoService {
     }
 
     private Producto obtenerProducto(Long id) {
-        return productoRepository.findById(id)
+        return productoRepository.buscarParaActualizar(id)
                 .orElseThrow(() -> new IllegalArgumentException("Pieza no encontrada."));
     }
 
@@ -289,15 +300,15 @@ public class ProductoService {
 
     // Sube la imagen a Cloudinary y regresa su URL https, que se guarda en ImagenProducto.
     private String guardarImagenCloudinary(MultipartFile foto) {
-        if (cloudinary == null) {
+        if (cloudinary == null || cloudinary.config.cloudName == null || cloudinary.config.cloudName.isBlank()
+                || cloudinary.config.apiKey == null || cloudinary.config.apiKey.isBlank()
+                || cloudinary.config.apiSecret == null || cloudinary.config.apiSecret.isBlank()) {
             throw new IllegalStateException("Cloudinary no está configurado.");
         }
         try {
             Map uploadResult = cloudinary.uploader().upload(foto.getBytes(), ObjectUtils.emptyMap());
             return uploadResult.get("secure_url").toString();
         } catch (Exception e) {
-            System.err.println("Error al subir a Cloudinary. Revisa tus credenciales.");
-            e.printStackTrace();
             throw new IllegalStateException("No se pudo subir la fotografía a Cloudinary. Revisa las credenciales en application.properties.");
         }
     }

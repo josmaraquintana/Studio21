@@ -13,9 +13,15 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import jakarta.persistence.LockModeType;
+import org.springframework.data.jpa.repository.Lock;
 
 @Repository
 public interface ProductoRepository extends JpaRepository<Producto, Long> {
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select p from Producto p where p.id = :id")
+    Optional<Producto> buscarParaActualizar(@Param("id") Long id);
 
     // Filtros opcionales: si un parámetro llega en null, ese filtro se ignora.
     @Query("SELECT p FROM Producto p WHERE " +
