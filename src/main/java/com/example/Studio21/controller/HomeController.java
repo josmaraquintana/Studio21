@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
- * Rutas del maquetado: seleccionan vistas y datos de ejemplo,
+ * Rutas públicas del maquetado: seleccionan vistas y datos de ejemplo,
  * sin operaciones de persistencia.
  * */
 @Controller
@@ -85,41 +85,4 @@ public class HomeController {
         return "pedido";
     }
 
-    private String vistaAdmin(String vista, String seccion, Model model) {
-        model.addAttribute("admin", true); model.addAttribute("seccion", seccion); return "admin/" + vista;
-    }
-
-    @GetMapping("/admin")
-    public String admin(Model model) { return vistaAdmin("inicio", "resumen", model); }
-
-    @GetMapping("/admin/productos")
-    public String productos(@RequestParam(defaultValue = "") String id,
-                            @RequestParam(defaultValue = "false") boolean crear, Model model) {
-        model.addAttribute("producto", datos.producto(id.isBlank() ? "eras" : id));
-        model.addAttribute("crear", crear); model.addAttribute("editar", !id.isBlank());
-        return vistaAdmin("productos", "productos", model);
-    }
-
-    @GetMapping("/admin/autenticidad")
-    public String autenticidad(@RequestParam(defaultValue = "Pendiente") String estado, Model model) {
-        model.addAttribute("verificacion", estado);
-        return vistaAdmin("autenticidad", "autenticidad", model);
-    }
-
-    @GetMapping("/admin/donaciones")
-    public String donaciones(@RequestParam(defaultValue = "false") boolean detalle, Model model) {
-        model.addAttribute("detalle", detalle); return vistaAdmin("donaciones", "donaciones", model);
-    }
-
-    @GetMapping("/admin/inventario")
-    public String inventario(Model model) { return vistaAdmin("inventario", "inventario", model); }
-
-    @GetMapping("/admin/pedidos")
-    public String pedidosAdmin(Model model) { return vistaAdmin("pedidos", "pedidos", model); }
-
-    @GetMapping("/admin/categorias")
-    public String categorias(Model model) { return vistaAdmin("categorias", "categorias", model); }
-
-    @GetMapping("/admin/artistas")
-    public String artistas(Model model) { return vistaAdmin("artistas", "artistas", model); }
 }
